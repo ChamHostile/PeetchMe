@@ -1,0 +1,43 @@
+html *  {
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 35px;
+    overflow-x: hidden;
+}
+.logo{
+    overflow-x: visible;
+}
+#profile{
+    min-height: 100vh;
+    margin-top: 170px;
+    overflow: hidden;
+}
+
+.chercheur{
+    height: 400px;
+    width: 380px;
+    background-image: url('../img/blondefemale.png');
+    overflow: hidden;
+    filter: brightness(75%);
+
+}
+.chercheur p {
+    filter: brightness(100%);
+}
+.porteur{
+    height: 400px;
+    width: 380px;
+    background-image: url('../img/coworkerafrican.png');
+    overflow: hidden;
+    filter: brightness(75%);
+
+}
+.porteur p{
+    filter: brightness(100%);
+}
+.title-profile{
+    margin-bottom: 120px !important;
+}
+

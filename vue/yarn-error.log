@@ -1,0 +1,36 @@
+Arguments: 
+  /usr/local/bin/node /opt/yarn-v1.22.19/bin/yarn.js
+
+PATH: 
+  /vue/node_modules/.bin:/node_modules/.bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.17.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: getaddrinfo EAI_AGAIN cdn.npmmirror.com
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)
+
+npm manifest: 
+  {
+    "name": "vue",
+    "version": "0.1.0",
+    "private": true,
+    "devDependencies": {
+      "@vue/cli-plugin-babel": "~5.0.0",
+      "@vue/cli-plugin-eslint": "~5.0.0",
+      "@vue/cli-service": "~5.0.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

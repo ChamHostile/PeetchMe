@@ -1,0 +1,135 @@
+.body{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 35px;
+    background: #E5E5E5;
+}
+
+.button-blue{
+    color: white;
+    background-color: #3F3FA6 !important;
+}
+.full-height{
+    min-height: 100vh;
+    background-image: url('../img/business_home.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
+.sm-img{
+    width: 75% !important;
+    height: 75% !important;
+}
+.associate-section{
+    position: relative;
+    height: 100vh;
+    padding:10px;
+    /* border-radius: 0 100em 100em 0; */
+    background: #F37332;
+    mix-blend-mode: normal;
+    overflow-y: hidden;
+}
+.associate-section::before{
+    border-radius: 100%;
+    position: absolute;
+    background-color: #F37332;
+    right: 500px;
+    top: -200px;
+    content: '';
+    bottom: 0;
+}
+.span-peetch{
+    height: 120px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    bottom: 0;
+    /* White */
+    border-radius: 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 35px;
+    margin-right: 0px;
+    /* black */
+    color: #333333;
+}
+.title{
+    /* Big title */
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 75px;
+
+    /* White */
+    color: #FFFFFF;
+
+}
+
+.title-associates{
+    position: relative;
+    border-radius: 2rem;
+}
+.title-associates::after{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    content: "";
+    bottom: 10%;
+    right: 2%;
+    border: solid #3F3FA6 1px;
+    border-radius: 2rem;
+
+}
+.know-more{
+    position: absolute;
+    top: 130%;
+    right: 48%;
+}
+#head{
+    margin-bottom: 300px;
+}
+.section-stat{
+    position: relative;
+}
+.stats{
+    position: absolute;
+    top: 65%;
+    margin-left: 0;
+    margin-right: 0;
+}
+#associates{
+    margin-top: 250px !important;
+}
+#associates div>h2 {
+    color: #F37332;
+}
+
+#match{
+    background-color: #F37332;
+}
+#find h1{
+    color:#F37332;
+}
+#find-2 h1{
+    color:#F37332;
+    margin-bottom: 250px;
+}
+.card{
+    background-color: white;
+    border: 0px;   
+    padding: 30px;
+}
+.card span{
+    color:#F37332; 
+    font-weight: bold;
+}
+
+/* .stats .col-2 {
+    padding: 50px 30px 50px 30px;
+    
+} */
