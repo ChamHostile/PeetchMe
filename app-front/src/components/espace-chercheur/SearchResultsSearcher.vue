@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid m-0 p-0 bg-light">
+  <div class="container-fluid m-0 p-0 bg-light" style="overflow-x:hidden">
     <NavbarConnected></NavbarConnected>
     <section style="overflow-x:hidden !important;">
       <p class="text-left my-5 offre">Vous êtes chercheur de projet</p>

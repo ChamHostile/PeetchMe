@@ -7,6 +7,7 @@ import RegisterPorteur from '@/components/register/RegisterStepsPorteur'
 import RegisterSubscription from '@/components/register/steps/RegisterSubscription'
 import HomeSearcher from '@/components/espace-chercheur/HomeSearcher'
 import SearchResultSearcher from '@/components/espace-chercheur/SearchResultsSearcher'
+import HomePorteur from '@/components/espace-porteur/HomePorteur'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/searcher/results',
       name: 'SearchResultSearcher',
       component: SearchResultSearcher
+    },
+    {
+      path: '/porteur/home',
+      name: 'HomePorteur',
+      component: HomePorteur
     }
   ]
 })
