@@ -11,32 +11,32 @@
           >
             <div class="row">
               <div class="col-10 mt-3">
-                <b-form-input v-model="project" id="input-1" type="text" required placeholder="Nom de votre projet"></b-form-input>
+                <b-form-input v-model="project" id="input-1" type="text" required placeholder="Nom de votre projet" @change="editAccount()"></b-form-input>
               </div>
             </div>
           </b-form-group>
           <div class="row" style="overflow-x: hidden;">
             <div class="col-12 mt-3">
-                <textarea class="form-control" rows="14" placeholder="Description de votre projet (x caractères minimum)"></textarea>
+                <textarea class="form-control" rows="14" placeholder="Description de votre projet (x caractères minimum)" @change="editAccount()" v-model="description"></textarea>
               </div>
           </div>
           <div class="row mt-3 ml-1">
             <b-form-group id="input-group-2" class="col-8 p-0">
-              <select class="form-control form-select" aria-label="Default select example">
+              <select class="form-control form-select" aria-label="Default select example" v-model="field" @change="editAccount()">
                 <option selected>Domaine d'activité (profils de chercheur)</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option value="field1">Domaine 1</option>
+                <option value="field2">Domaine 2</option>
+                <option value="field3">Domaine 3</option>
               </select>
             </b-form-group>
           </div>
           <div class="row ml-1">
             <b-form-group id="input-group-2" class="col-8 p-0">
-              <select class="form-control form-select" aria-label="Default select example">
+              <select class="form-control form-select" aria-label="Default select example" v-model="skill" @change="editAccount()">
                 <option selected>Compétences souhaitées</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option value="skill1">Competence 1</option>
+                <option value="skill2">Competence 2</option>
+                <option value="skill3">Competence 3</option>
               </select>
             </b-form-group>
           </div>
@@ -46,24 +46,45 @@
         </div>
       </div>
     </div>
-  </template>
+</template>
 
 <script>
-/* eslint-disable */
+import store from '../../../store'
 
-export default {
-  name: 'StepsPorteur3',
-  props: ['store'],
-  methods: {
-    //nextStep() {
-    /*this.$emit("loading", true);
-      setTimeout(() => {
-        this.$emit("can-continue");
-        //this.$emit("fatal-error", "Erreur s'est produite");
-      }, 2000);*/
-    //}
-  }
-};
+/* eslint-disable */
+  export default {
+    name: 'StepsPorteur3',
+    data() {
+      return {
+        project: "",
+        field: "",
+        skill: "",
+        description: "",
+        store
+      };
+    },
+    computed: {
+    },
+    methods: { 
+      getUserId() {
+        let user = JSON.parse(localStorage.getItem("user"))
+        console.log(user.user.user.id)
+        console.log(user)
+        return user.user.user.id;
+      },
+      editAccount() {
+        this.$store.commit('storeProject', {
+          project: {
+            id: this.getUserId(),
+            name: this.project,
+            description: this.description, 
+            skill: this.skill,
+            field: this.field
+          }
+        });
+      } 
+    }
+  };
 </script>
 
 <style scoped>

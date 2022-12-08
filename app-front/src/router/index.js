@@ -8,7 +8,10 @@ import RegisterSubscription from '@/components/register/steps/RegisterSubscripti
 import HomeSearcher from '@/components/espace-chercheur/HomeSearcher'
 import SearchResultSearcher from '@/components/espace-chercheur/SearchResultsSearcher'
 import HomePorteur from '@/components/espace-porteur/HomePorteur'
+import Login from '@/components/LoginComponent'
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
 Vue.use(Router)
 
 export default new Router({
@@ -52,6 +55,11 @@ export default new Router({
       path: '/porteur/home',
       name: 'HomePorteur',
       component: HomePorteur
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })

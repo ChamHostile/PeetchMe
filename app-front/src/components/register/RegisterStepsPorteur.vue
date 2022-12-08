@@ -7,7 +7,7 @@
   </div>
 </template>
 <script>
-import Stepper from './Stepper'
+import Stepper from './StepperPorteur'
 import StepsPorteur1 from './steps/StepsPorteur1'
 import StepsPorteur2 from './steps/StepsPorteur2'
 import StepsPorteur3 from './steps/StepsPorteur3'
