@@ -9,6 +9,8 @@ import HomeSearcher from '@/components/espace-chercheur/HomeSearcher'
 import SearchResultSearcher from '@/components/espace-chercheur/SearchResultsSearcher'
 import HomePorteur from '@/components/espace-porteur/HomePorteur'
 import Login from '@/components/LoginComponent'
+import DashboardSearcher from '@/components/espace-chercheur/DashboardSearcher'
+
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
@@ -60,6 +62,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/dashboardSearcher',
+      name: 'DashboardSearcher',
+      component: DashboardSearcher
     }
   ]
 })

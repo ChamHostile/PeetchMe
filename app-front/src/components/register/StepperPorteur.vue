@@ -190,11 +190,12 @@ export default {
     },
     editAction() {
       const self = this
-      this.store.dispatch('editAccount').then((response) => {
-        if (response.status === 200) {
-          self.$router.push({path: '/register/subscription', replace: true})
-        }
-      })
+      this.store.dispatch("editAccount", {}).then(function (response) {
+          if (response.status === 200 ) {
+            self.$router.push({path: '/register/subscription', replace: true})
+          }
+          console.log(response);
+      });
     }
   }
 };

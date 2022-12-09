@@ -20,35 +20,57 @@
             <p>✓ Possibilité d’ajouter un autre projet à votre profil</p>
             <p>✓ Ajouter des informations supplémentaires à votre profil (vidéo présentation, portfolio, réseaux sociaux)</p>
           </div>
-          </div>
-          <router-link class="my-auto text-center text-light" to="/register/searcher"></router-link>
         </div>
-        <div class="col-3 mr-auto">
-          <div class="card p-0">
-            <div class="card-header text-white text-center" style="background-color:#3F3FA6;"><h3>
-              Option à <h1>4.99 €</h1></h3>
-            </div>
-            <div class="card-body text-left mr-5 text-dark">
-              <p>mise en avant sur la plateforme pendant 1 semaine. Cette option est renouvelable à l'infini.</p>
-            </div>
-            </div>
-            <router-link class="my-auto text-center text-light" to="/register/porteur"></router-link>
+      </div>    
+      <div class="col-3 mr-auto">
+        <a href="#" @click.prevent="subscribeUser()">
+        <div class="card p-0">
+          <div class="card-header text-white text-center" style="background-color:#3F3FA6;"><h3>
+            Option à <h1>4.99 €</h1></h3>
           </div>
+          <div class="card-body text-left mr-5 text-dark">
+            <p>mise en avant sur la plateforme pendant 1 semaine. Cette option est renouvelable à l'infini.</p>
+          </div>
+          </div>
+        </a>
+          <router-link class="my-auto text-center text-light" to="/register/porteur"></router-link>
         </div>
+      </div>
     </section>
     <Footer class="mt-5"></Footer>
   </div>
 </template>
 <script>
 import NavbarConnected from '../NavbarConnected'
-import Footer from '../../Footer'
+import Footer from '../../Footer.vue'
+
 export default {
   name: 'RegisterSubscription',
   components: {NavbarConnected, Footer},
-  data () {
-    return {
+  methods: {
+    getUserType() {
+      let user = JSON.parse(localStorage.getItem("user"))
+      console.log(user.user.user.id)
+      console.log(user)
+      return user.user.user.user_type;
+    },
+    subscribeUser(subType) {
+      const self = this
+      const userType = this.getUserType
+      this.store.dispatch("subscribeUser", {
+        subType: subType
+      }).then(function (response) {
+          if (response.status === 200 ) {
+            if (userType === 1) {
+              self.$router.push({path: '/searcher/home', replace: true})
+            } else {
+              self.$router.push({path: '/porteur/home', replace: true})
+            }
+          }
+          console.log(response);
+      });
     }
-  }
+  },
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

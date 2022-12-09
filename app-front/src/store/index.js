@@ -34,49 +34,56 @@ const store = new Vuex.Store({
   },
   actions: {
     createAccount: async ({commit, state}) => {
-      return instance.post('/register', state.userRegister)
+      return new Promise((resolve, reject) => {
+        instance.post('/register', state.userRegister)
         .then(function (response) {
           console.log(response.status)
           commit("setUser", {
             user: response.data
           })
-          resolve(response)
+          resolve(response);
         })
         .catch(function (error) {
-          console.log(error)
+          reject(error)
         })
+      }) 
     },
-    editAccount: ({commit, state}) => {
-      instance.post('/registerEdit', state.userInfos)
+    editAccount: ({state}) => {
+      return new Promise((resolve, reject) => {
+        instance.post('/registerEdit', state.userInfos)
         .then(function (response) {
           resolve(response)
         })
         .catch(function (error) {
-          console.log(error)
+          reject(error)
         })  
+      })
     },
-    login: async ({commit}, userInfos, state ) => {
-       return instance.post('/login', userInfos)
+    login: async ({commit, state}, userInfos) => {
+       return new Promise((resolve, reject) => {
+        instance.post('/login', userInfos)
         .then(function (response) {
           commit("setUser", {
-            user: response.data
+            user: response.data 
           })
-          console.log(state.user, state.userInfos)
           resolve(response)
         })
         .catch(function (error) {
-          console.log(error)
+          reject(error)
         })
+       }) 
     },
     logout: ({commit}) => {
-      instance.post('/logout')
+      new Promise((resolve, reject) => {
+        instance.post('/logout')
         .then(function (response) {
           commit('logout')
           resolve(response)
         })
         .catch(function (error) {
-          console.log(error)
+          reject(error)
         })
+      })
     }
   },
   mutations: {

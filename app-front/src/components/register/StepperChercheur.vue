@@ -51,7 +51,7 @@
         v-if="steps[step].confirm"
         style="background-color:#3F3FA6"
         class="ml-2 valider-register-porteur"
-        @click.prevent="editAction()"
+        @click.prevent="editAction();"
       >Valider</b-button>
       <button
         v-if="step > 0"
@@ -186,16 +186,18 @@ export default {
             password: this.store.state.userRegister.password,
         }).then( (response) => {
           console.log('logged in')
+          console.log(response)
         })
       }
     },
     editAction() {
       const self = this
-      this.store.dispatch('editAccount').then((response) => {
-        if (response.status === 200) {
-          self.$router.push({path: '/register/subscription', replace: true})
-        }
-      })
+      this.store.dispatch("editAccount", {}).then(function (response) {
+          if (response.status === 200 ) {
+            self.$router.push({path: '/register/subscription', replace: true})
+          }
+          console.log(response);
+      });
     }
   }
 };

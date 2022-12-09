@@ -70,29 +70,30 @@ class SecurityController extends AbstractController
       
     if (isset($jsonData->data)) {
       $currentUser = $this->userRepository->findOneBy(['id' => $jsonData->data->id]);
-      if (isset($jsonData->data->data->name) && isset($jsonData->data->data->firstname) && isset($jsonData->data->data->phone)) {
-        $currentUser->setNom($jsonData->data->data->name);
-        $currentUser->setPrenom($jsonData->data->data->firstname);
-        $currentUser->setTelephone($jsonData->data->data->phone);
+      if (isset($jsonData->data->name) && isset($jsonData->data->firstname) && isset($jsonData->data->phone)) {
+        $currentUser->setNom($jsonData->data->name);
+        $currentUser->setPrenom($jsonData->data->firstname);
+        $currentUser->setTelephone($jsonData->data->phone);
+        $currentUser->setAge($jsonData->data->age);
       }
   
       $address = $this->addressRepository->findOneBy(['user_id' => $currentUser->getId()]);
   
-      if (!$address && isset($jsonData->data->data->address)) {
+      if (!$address && isset($jsonData->data->address)) {
         $address = new Address();
         $address->setUserId($currentUser);
-        $address->setAddress($jsonData->data->data->address);
+        $address->setAddress($jsonData->data->address);
         $em->persist($address);
       }
     }
 
 
-    if (isset($currentUser) && $currentUser->getUserType() === 2 && isset($jsonData->data->project) && isset($jsonData->data->project->skill)) {
+    if (isset($currentUser) && $currentUser->getUserType() === 2 && isset($jsonData->project) && isset($jsonData->project->skill)) {
       $project = new Project();
       $project->setUserId($currentUser);
-      $project->setDescription($jsonData->data->project->description);
-      $project->setName($jsonData->data->project->name);
-      $project->setField($jsonData->data->project->field);
+      $project->setDescription($jsonData->project->description);
+      $project->setName($jsonData->project->name);
+      $project->setField($jsonData->project->field);
       $em->persist($project);
 
       $skillWantEntry = $this->skillsRepository->findOneBy(['name' => $jsonData->data->project->skill]);
@@ -101,10 +102,12 @@ class SecurityController extends AbstractController
         $skillWant->setName($jsonData->data->project->skill);
         $em->persist($skillWant);
       }
+      if (isset($project)) $project->addSkill($jsonData->data->skill);
+
     }
 
-    if (isset($jsonData->data->data) && isset($currentUser) && 
-    $currentUser->getUserType() === 2 && isset($jsonData->data->data->skill) && isset($jsonData->data->data->skill1) && isset($jsonData->data->data->skill2) && isset($jsonData->data->data->skill3) && isset($jsonData->data->data->skill4)) {
+    if (isset($jsonData->data) && isset($currentUser) && 
+    $currentUser->getUserType() === 2 && isset($jsonData->data->skill) && isset($jsonData->data->skill1) && isset($jsonData->data->skill2) && isset($jsonData->data->skill3) && isset($jsonData->data->skill4)) {
 
       for ($i = 1; $i < 4 ; $i++) {
         $skill = $this->skillsRepository->findOneBy(['name' => $jsonData['data']['data']['skill'.$i]]);
@@ -112,7 +115,6 @@ class SecurityController extends AbstractController
           $skill = new Skills();
           $skill->setName($jsonData['data']['data']['skill'.$i]);
           $em->persist($skill);
-          if (isset($project)) $project->addSkill($skill);
         }
       }
     }
@@ -122,6 +124,7 @@ class SecurityController extends AbstractController
     $em->flush();
 
     if (!isset($currentUser)) $currentUser = "no user data to update";
+    if (!isset($jsonData->data)) $jsonData = "no data";
 
     return $this->json([
       'user'=> $currentUser,
@@ -135,6 +138,17 @@ class SecurityController extends AbstractController
     $currentUser = $this->security->getUser();
     return $this->json([
       'user'=> $currentUser
+    ]);
+  }
+
+  #[Route('/getProject', name: 'getProject', methods: ['GET'])]
+  public function getProject(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+
+    $skills = $this->skillsRepository->findBy(['user_id' => $jsonData->data->id]);
+    return $this->json([
+      'skills'=> $skills
     ]);
   }
 }
