@@ -18,7 +18,7 @@
         <b-form-input v-model="prenom" id="input-1" type="text" required placeholder="Prenom" class="col" @change="editAccount()"></b-form-input>
       </div>
       <div class="col-6 mt-3">
-        <b-form-input v-model="age" id="input-1" type="text" required placeholder="Age" class="col" @change="editAccount()"></b-form-input>
+        <b-form-input v-model="age" id="input-1" type="number" required placeholder="Age" class="col" @change="editAccount()"></b-form-input>
       </div>
       <div class="col-12 mt-3">
         <b-form-input v-model="address" id="input-1" type="text" required placeholder="Adresse Postale" @change="editAccount()"></b-form-input>
@@ -54,17 +54,17 @@
         <b-form-group id="input-group-2" class="col-5 p-0">
           <select class="form-control form-select" aria-label="Default select example" v-model="skill3" @change="editAccount()">
             <option selected>Qualités</option>
-            <option value="1">Qualité 1</option>
-            <option value="2">Qualité 2</option>
-            <option value="3">Qualité 3</option>
+            <option value="qualite1">Qualité 1</option>
+            <option value="qualite2">Qualité 2</option>
+            <option value="qualite3">Qualité 3</option>
           </select>
         </b-form-group>
         <b-form-group id="input-group-2" class="col-5 p-0 ml-3">
           <select class="form-control form-select" aria-label="Default select example" v-model="skill4" @change="editAccount()">
             <option selected>Défauts</option>
-            <option value="1">Défaut 1</option>
-            <option value="2">Défaut 2</option>
-            <option value="3">Défaut 3</option>
+            <option value="defaut1">Défaut 1</option>
+            <option value="defaut2">Défaut 2</option>
+            <option value="defaut3">Défaut 3</option>
           </select>
         </b-form-group>
       </div>
@@ -75,9 +75,9 @@
         <b-form-group id="input-group-2" class="col-8 p-0">
           <select class="form-control form-select" aria-label="Default select example" v-model="preference" @change="editAccount()">
             <option selected>Préférence (profils de chercheur)</option>
-            <option value="1">Type 1</option>
-            <option value="2">Type 2</option>
-            <option value="3">Type 3</option>
+            <option value="type1">Type 1</option>
+            <option value="type2">Type 2</option>
+            <option value="type3">Type 3</option>
           </select>
         </b-form-group>
       </div>
@@ -114,23 +114,23 @@ export default {
   methods: {
     getUserId() {
       let user = JSON.parse(localStorage.getItem("user"))
-      console.log(user.user.user.id)
-      console.log(user)
       return user.user.user.id;
     },
     editAccount() {
       this.store.commit('storeAccount', {
-        id: this.getUserId(),
+        id: this.store.state.user.id,
         name: this.nom,
         firstname: this.prenom,
         phone: this.telephone,
         age: this.age,
         address: this.address,
         phone: this.telephone,
-        skill1: this.skill1,
-        skill2: this.skill2,
-        skill3: this.skill3,
-        skill4: this.skill4,
+        skill: {
+          skill1: this.skill1,
+          skill2: this.skill2,
+          skill3: this.skill3,
+          skill4: this.skill4
+        },
         description: this.description,
         preference: this.preference,
         userType: 2

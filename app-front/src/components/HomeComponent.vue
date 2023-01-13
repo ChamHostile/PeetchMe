@@ -16,7 +16,7 @@
           </b-row>
         </div>
         <div class="offset-1 col-sm-4">
-          <b-button size="md" class="button-blue"><router-link to="/register" class="text-light">Inscription</router-link></b-button>
+          <b-button size="md" class="button-blue"><router-link to="/register/create" class="text-light">Inscription</router-link></b-button>
           <b-button size="md" class="bg-light border-primary text-primary ml-3" to="/login">Se connecter</b-button>
         </div>
 
@@ -152,7 +152,7 @@ export default {
   name: 'HomeComponent',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      
     }
   }
 }

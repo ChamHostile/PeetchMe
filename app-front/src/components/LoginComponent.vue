@@ -45,15 +45,22 @@ export default {
       login() {
           const self = this
           this.store.dispatch("login", {
-              email: this.email,
+              username: this.email,
               password: this.password,
           }).then(function (response) {
-              if (response.data.user.user_type === 1 ) {
+            self.store.dispatch("loginToken", {
+          }).then(function (rep) {
+            console.log(rep);
+            self.store.dispatch("userInfos", {
+            }).then(function(r) {
+              if (r.data.user_type === 1 ) {
                 self.$router.push({path: '/searcher/home', replace: true})
               } else {
                 self.$router.push({path: '/porteur/home', replace: true})
               }
-              console.log(response);
+            })
+          })
+              
           });
       }
     },

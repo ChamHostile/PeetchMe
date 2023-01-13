@@ -1,6 +1,9 @@
 <template>
   <div class="container-fluid m-0 p-0 bg-light" style="overflow-x:hidden">
     <NavbarConnected></NavbarConnected>
+    <div class="row">
+    <SideBarComponent></SideBarComponent>
+    <div class="col-11">
     <section style="overflow-x:hidden !important;">
       <p class="text-left my-5 offre">Vous êtes chercheur de projet</p>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
@@ -66,32 +69,16 @@
     <section style="overflow-x:hidden !important;" class="mt-5 mx-5">
       <h6 class="projects">Ces projets pourraient vous intéresser</h6>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
+        <div class="col-4" v-for="project in projects">
+          <div class="card shadow-sm p-0" @click="goToDetail(project.id) ">
             <img src="../../assets/img/project.png" class="card-img-top" alt="...">
             <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
+              <p class="card-text">{{project.description}}</p>
             </div>
           </div>
         </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col mt-2 d-flex justify-content-end">
-          <p>Voir plus...</p>
+        <div class="col mt-5 d-flex justify-content-end">
+          <a class="btn btn-secondary text-white p-2 rounded" @click="goTo('SearchResultSearcher')">Voir plus...</a>
         </div>
       </div>
     </section>
@@ -129,20 +116,44 @@
         </div>
       </div>
     </section>
+    </div>
+    </div>
     <Footer class="mt-5"></Footer>
   </div>
 </template>
 <script>
 import NavbarConnected from '../register/NavbarConnected'
 import Footer from '../Footer'
+import store from '../../store'
+import SideBarComponentVue from '../SideBarComponent.vue'
 
 export default {
   name: 'HomeSearcher',
-  components: {NavbarConnected, Footer},
+  components: {NavbarConnected, Footer, SideBarComponentVue},
   data () {
     return {
+      store,
+      projects: [],
     }
-  }
+  },
+  created() {
+    let self = this
+      this.store.dispatch("getProjects", {}).then( (response) => {
+          console.log(response.data.projects)
+          self.projects = response.data.projects
+          self.projects = self.projects.slice(0, 3) 
+          console.log(self.projects)
+        })
+    },
+    methods: {
+      goToDetail($id) {
+        var url = "/project/" + $id
+        this.$router.push(url);  
+      },
+      goTo(name) {
+        this.$router.push({name: name});
+      }
+    },
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

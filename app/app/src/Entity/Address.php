@@ -19,8 +19,17 @@ class Address
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     private ?string $address = null;
+
+    #[ORM\Column(length: 255, nullable:true)]
+    private ?string $country = null;
+
+    #[ORM\Column(length: 255, nullable:true)]
+    private ?string $localization = null;
+
+    #[ORM\Column(length: 255, nullable:true)]
+    private ?string $zip = null;
 
     public function getId(): ?int
     {
@@ -50,4 +59,42 @@ class Address
 
         return $this;
     }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function getLocalization(): ?string
+    {
+        return $this->localization;
+    }
+
+    public function setLocalization(string $localization): self
+    {
+        $this->localization = $localization;
+
+        return $this;
+    }
+
+    public function getZip(): ?string
+    {
+        return $this->zip;
+    }
+
+    public function setZip(string $zip): self
+    {
+        $this->zip = $zip;
+
+        return $this;
+    }
+
+
 }

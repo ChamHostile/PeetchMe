@@ -6,7 +6,7 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/api'
+  baseURL: 'http://localhost:8080/api',
 })
 
 let user = localStorage.getItem('user')
@@ -59,12 +59,117 @@ const store = new Vuex.Store({
         })  
       })
     },
-    login: async ({commit, state}, userInfos) => {
+    editDashboard: ({state}, editInfos) => {
+      return new Promise((resolve, reject) => {
+        instance.post('/registerEdit', editInfos)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getUser: ({state}, userId) => {
+      let url = '/users/' + userId.id
+      return new Promise((resolve, reject) => {
+        instance.get(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getUserFull: ({state}, userId) => {
+      let url = '/getUserFull'
+      return new Promise((resolve, reject) => {
+        instance.post(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getProjects: async ({state}, userId) => {
+      let url = '/match/porteurs'
+      return new Promise((resolve, reject) => {
+        instance.get(url, {userId})
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getSkill: async ({state}, skillUrl) => {
+      let url = skillUrl.url
+      return new Promise((resolve, reject) => {
+        instance.get(url)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    myProject: ({commit, state}) => {
+      let url = '/getProject';
+      const user = JSON.parse(localStorage.getItem("user"));
+      // const userId = user.id;
+      // let idPayload = {
+      //   id: userId
+      // }
+      let idPayload = {id: user.id}
+      console.log(user);
+      return new Promise((resolve, reject) => {
+        instance.post(url, idPayload)
+        .then(function (response) {
+          resolve(response)
+          if (response.data.project !== undefined && response.data.project !== null_) {
+            commit('setProject', response.data)
+          }
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getFullProject: ({commit, state}, payload) => {
+      let url = '/getProjectFull';
+      return new Promise((resolve, reject) => {
+        instance.post(url, payload)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getChercheurs: async ({state}, userId) => {
+      let url = '/match/chercheur'
+      return new Promise((resolve, reject) => {
+        instance.get(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    login: ({commit, state}, userInfos) => {
        return new Promise((resolve, reject) => {
         instance.post('/login', userInfos)
         .then(function (response) {
-          commit("setUser", {
-            user: response.data 
+          commit("loginUser", {
+            token: response.data 
           })
           resolve(response)
         })
@@ -72,6 +177,31 @@ const store = new Vuex.Store({
           reject(error)
         })
        }) 
+    },
+    loginToken: async ({commit}) => {
+      return new Promise((resolve, reject) => {
+       instance.get('/me')
+       .then(function (response) {
+        commit('setId', response.data.id)
+         resolve(response)
+       })
+       .catch(function (error) {
+         reject(error)
+       })
+      }) 
+   },
+   userInfos: async ({commit, state}) => {
+    let url = '/users/' + state.user.id
+    return new Promise((resolve, reject) => {
+     instance.get(url)
+     .then(function (response) {
+      commit('setUser', response.data)
+       resolve(response)
+     })
+     .catch(function (error) {
+       reject(error)
+     })
+    }) 
     },
     logout: ({commit}) => {
       new Promise((resolve, reject) => {
@@ -86,10 +216,26 @@ const store = new Vuex.Store({
       })
     }
   },
+  
   mutations: {
+    loginUser: function (state, token) {
+      state.user.token = token
+      localStorage.setItem('token', JSON.stringify(token))
+      instance.defaults.headers.common = {'Authorization': `Bearer ${token.token.token}`}
+      console.log(token.token.token)
+      console.log(instance.defaults.headers.common.Authorization)
+    },
     setUser: function (state, user) {
       localStorage.setItem('user', JSON.stringify(user))
       state.user = user
+    },
+    setProject: function (state, user) {
+      localStorage.setItem('project', JSON.stringify(project))
+      state.project = project
+    },
+    setId: function(state, id) {
+      state.user.id = id
+      console.log(state.user.id)
     },
     logout: function (state) {
       state.user = {

@@ -7,7 +7,9 @@ use App\Entity\Project;
 use App\Entity\Skills;
 use App\Repository\UserRepository;
 use App\Repository\AddressRepository;
+use App\Repository\ProjectRepository;
 use App\Repository\SkillsRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security as Security;
@@ -25,8 +27,8 @@ class SecurityController extends AbstractController
     private SerializerInterface $serializer,
     private Security $security,
     private AddressRepository $addressRepository,
-    private SkillsRepository $skillsRepository
-
+    private SkillsRepository $skillsRepository,
+    private ProjectRepository $projectRepository
   )
   {
 
@@ -40,16 +42,15 @@ class SecurityController extends AbstractController
     ]);
   }
 
-  #[Route('/logout', name: 'app_logout', methods: ['GET'])]
-  public function logout()
-  {
-      // controller can be blank: it will never be called!
-      $response = $this->security->logout();
+  #[Route('/api/login', name: 'api_login', methods: ['POST'])]
+  public function apiLogin() {
+    $user = $this->getUser();
+    return $this->json([
+      'user' => $user,
+      'userId' => $user->getId()
+    ]);
+  }
 
-      return $this->json([
-        "message" => 'logged out'
-      ]);
-    }
 
   #[Route('/register', name: 'user_register', methods: ['POST'])]
   public function app(Request $request) : JsonResponse
@@ -70,53 +71,105 @@ class SecurityController extends AbstractController
       
     if (isset($jsonData->data)) {
       $currentUser = $this->userRepository->findOneBy(['id' => $jsonData->data->id]);
-      if (isset($jsonData->data->name) && isset($jsonData->data->firstname) && isset($jsonData->data->phone)) {
+      if (isset($jsonData->data->name) && isset($jsonData->data->firstname)) {
         $currentUser->setNom($jsonData->data->name);
         $currentUser->setPrenom($jsonData->data->firstname);
-        $currentUser->setTelephone($jsonData->data->phone);
-        $currentUser->setAge($jsonData->data->age);
+        if (isset($jsonData->data->phone)) $currentUser->setTelephone($jsonData->data->phone);
+        if (isset($jsonData->data->experience)) $currentUser->setExperience($jsonData->data->experience);
+        if (isset($jsonData->data->secteur)) $currentUser->setSecteur($jsonData->data->secteur);
+        if (isset($jsonData->data->age)) $currentUser->setAge(intval($jsonData->data->age));
+
+        $em->persist($currentUser);
       }
   
       $address = $this->addressRepository->findOneBy(['user_id' => $currentUser->getId()]);
   
-      if (!$address && isset($jsonData->data->address)) {
+      if (!$address && isset($jsonData->data->country)) {
         $address = new Address();
         $address->setUserId($currentUser);
-        $address->setAddress($jsonData->data->address);
+        $address->setCountry($jsonData->data->country); 
+        $address->setAddress(""); 
+        $address->setZip($jsonData->data->zip);
+        if (isset($jsonData->data->localization)) {
+          $address->setAddress($jsonData->data->localization);
+        }
         $em->persist($address);
+
+      } else if (isset($jsonData->data->country) && $address){
+
+        $address->setCountry($jsonData->data->country);
+        $em->persist($address);
+
       }
-    }
-
-
-    if (isset($currentUser) && $currentUser->getUserType() === 2 && isset($jsonData->project) && isset($jsonData->project->skill)) {
-      $project = new Project();
-      $project->setUserId($currentUser);
-      $project->setDescription($jsonData->project->description);
-      $project->setName($jsonData->project->name);
-      $project->setField($jsonData->project->field);
-      $em->persist($project);
-
-      $skillWantEntry = $this->skillsRepository->findOneBy(['name' => $jsonData->data->project->skill]);
-      if (!$skillWantEntry) {
-        $skillWant = new Skills();
-        $skillWant->setName($jsonData->data->project->skill);
-        $em->persist($skillWant);
-      }
-      if (isset($project)) $project->addSkill($jsonData->data->skill);
 
     }
 
-    if (isset($jsonData->data) && isset($currentUser) && 
-    $currentUser->getUserType() === 2 && isset($jsonData->data->skill) && isset($jsonData->data->skill1) && isset($jsonData->data->skill2) && isset($jsonData->data->skill3) && isset($jsonData->data->skill4)) {
+    if (isset($jsonData->project)) {
+      $user = $this->userRepository->findOneBy(['id' => $jsonData->project->project->id]);
+      if ($user->getUserType() === 2) {
+        $project = new Project();
+        $project->setUserId($user);
+        $project->setDescription($jsonData->project->project->description);
+        $project->setName($jsonData->project->project->name);
+        $project->setField($jsonData->project->project->field);
+        $em->persist($project);
+  
+        $skillWantEntry = $this->skillsRepository->findOneBy(['name' => $jsonData->project->project->skill]);
+        $fieldWantEntry = $this->skillsRepository->findOneBy(['name' => $jsonData->project->project->field]);
 
-      for ($i = 1; $i < 4 ; $i++) {
-        $skill = $this->skillsRepository->findOneBy(['name' => $jsonData['data']['data']['skill'.$i]]);
-        if (!$skill) {
-          $skill = new Skills();
-          $skill->setName($jsonData['data']['data']['skill'.$i]);
-          $em->persist($skill);
+        if (!$skillWantEntry) {
+          $skillWant = new Skills();
+          $skillWant->setName($jsonData->project->project->skill);
+          $skillWant->setType("competence");
+          $em->persist($skillWant);
+          $project->addSkill($skillWant);
+          $em->persist($project);
+        } 
+        if (!$fieldWantEntry) {
+          $fieldWant = new Skills();
+          $fieldWant->setName($jsonData->project->project->field);
+          $fieldWant->setType("domaine");
+          $em->persist($fieldWant);
+          $project->addSkill($fieldWant);
+          $em->persist($project);
         }
       }
+    }
+
+    if (isset($jsonData->data) && isset($currentUser) && isset($jsonData->data->skill)) {
+
+      foreach($jsonData->data->skill as $skill) {
+        $skillEntry = $this->skillsRepository->findOneBy(['name' => $skill]);
+        if ($skillEntry) {
+          $currentUser->addSkill($skillEntry);
+          $em->persist($currentUser);
+        }
+      }
+    }
+
+    if (isset($jsonData->data) && isset($currentUser) && isset($jsonData->data->softSkills)) {
+
+      foreach($jsonData->data->softSkills as $soft) {
+        $skillEntry = $this->skillsRepository->findOneBy(['name' => $soft]);
+        if ($skillEntry) {
+          $currentUser->addSkill($skillEntry);
+          $em->persist($currentUser);
+        }
+      }
+    }
+
+    if (isset($jsonData->data) && isset($currentUser) && isset($jsonData->data->secteurs)) {
+
+      foreach($jsonData->data->secteurs as $secteur) {
+        $skillEntry = $this->skillsRepository->findOneBy(['name' => $secteur]);
+        if ($skillEntry) {
+          $currentUser->addSkill($skillEntry);
+          $em->persist($currentUser);
+        }
+      }
+    }
+    if (isset($jsonData->data->password)) {
+      $password = $this->userRepository->changePwd($jsonData->data->password, $currentUser);
     }
 
     if (isset($currentUser)) $em->persist($currentUser);
@@ -124,11 +177,17 @@ class SecurityController extends AbstractController
     $em->flush();
 
     if (!isset($currentUser)) $currentUser = "no user data to update";
-    if (!isset($jsonData->data)) $jsonData = "no data";
+    if (!isset($jsonData)) $jsonData = "no data";
+    $thisProject = "";
+    if (isset($jsonData->project)) $thisProject = $jsonData->project->project;
+    // if (!isset($jsonData->project)) $jsonData = $jsonData.", no project";
 
     return $this->json([
       'user'=> $currentUser,
-      'data' => $jsonData
+      'data' => $jsonData,
+      'project' => $thisProject,
+      'address' => $address,
+      'email' => $currentUser->getEmail()
     ]);
   }
 
@@ -141,14 +200,104 @@ class SecurityController extends AbstractController
     ]);
   }
 
-  #[Route('/getProject', name: 'getProject', methods: ['GET'])]
+  #[Route('/getProject', name: 'getProject', methods: ['POST'])]
   public function getProject(Request $request, ManagerRegistry $doctrine) : JsonResponse
   {
     $jsonData = json_decode($request->getContent());
+    // dd($jsonData);
+    $user = $this->userRepository->findOneBy(['id' => $jsonData->id]);
+    $project = $this->projectRepository->findOneBy(['user_id' => $user]);
 
-    $skills = $this->skillsRepository->findBy(['user_id' => $jsonData->data->id]);
     return $this->json([
-      'skills'=> $skills
+      'project' => $project
+    ]);
+  }
+
+  #[Route('/getProjectFull', name: 'getProjectFull', methods: ['POST'])]
+  public function getProjectFull(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+    // dd($jsonData);
+    $project = $this->projectRepository->findOneBy(['id' => $jsonData->projectId]);
+    $user = $this->userRepository->findOneBy(['id' => $project->getUserId()]);
+
+    return $this->json([
+      'project' => $project,
+      'user' => $user
+    ]);
+  }
+
+  #[Route('/getUserFull', name: 'getUserFull', methods: ['POST'])]
+  public function getUserFull(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+    // dd($jsonData);
+    $user = $this->userRepository->findOneBy(['id' => $jsonData->id]);
+    $address = $this->addressRepository->findOneBy(['user_id' => $user->getId()]);
+
+    $userSkill = $user->getSkills();
+
+
+    return $this->json([
+      'user' => $user,
+      'skills' => $userSkill,
+      'address' => $address,
+      'email' => $user->getEmail()
+    ]); 
+  }
+
+  #[Route('/match/porteurs', name: 'getProjects', methods: ['GET'])]
+  public function getPorteurMatchs(Request $request, ManagerRegistry $doctrine, $page=1) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+    if  (isset($jsonData->page)) $page = $jsonData->page;
+    $project = $this->projectRepository->createQueryBuilder('u')
+                    ->orderBy('u.id', 'DESC')
+                    ->getQuery();
+    $pageSize = '20';
+    $paginator = new Paginator($project);
+
+    $totalItems = count($paginator);
+
+    $pagesCount = ceil($totalItems / $pageSize);
+
+    $paginator
+      ->getQuery()
+      ->setFirstResult($pageSize * ($page - 1))
+      ->setMaxResults($pageSize);
+
+    return $this->json([
+      'projects' => $paginator,
+      'maxPages' => $pagesCount,
+      'maxResults' => $totalItems
+    ]);
+  }
+
+  #[Route('/match/chercheur', name: 'getChercheurs', methods: ['GET'])]
+  public function getCherheurMatchs(Request $request, ManagerRegistry $doctrine, $page=1) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+    if (isset($jsonData->page)) $page = $jsonData->page;
+    $user = $this->userRepository->createQueryBuilder('u')
+                    ->orderBy('u.id', 'DESC')
+                    ->getQuery();
+    $pageSize = '20';
+    $paginator = new Paginator($user);
+
+    $totalItems = count($paginator);
+
+    $pagesCount = ceil($totalItems / $pageSize);
+
+    $paginator
+      ->getQuery()
+      ->setFirstResult($pageSize * ($page - 1))
+      ->setMaxResults($pageSize);
+
+    return $this->json([
+      'chercheurs' => $paginator,
+      'maxPages' => $pagesCount,
+      'maxResults' => $totalItems,
+      'page' => $page
     ]);
   }
 }

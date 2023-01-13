@@ -66,7 +66,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $user = new User();
         $user->setEmail($data->email);
-        $user->setUserType($data->type);
         $password = $this->passwordEncoder->hashPassword($user, $data->password);
         $user->setPassword($password);
         $user->setCreatedAt(new DateTime('now'));
@@ -78,6 +77,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
  
          return $user;
+     }
+
+     public function changePwd($pwd, $user) {
+        $password = $this->passwordEncoder->hashPassword($user, $pwd);
+
+        $this->_em->persist($user);
+        $this->_em->flush();
+ 
+         return $user;
+
      }
 
      public function edit($data) {

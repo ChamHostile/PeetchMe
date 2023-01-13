@@ -114,7 +114,7 @@ export default {
     editAccount() {
       const self = this
       this.store.commit('storeAccount', {
-        id: this.getUserId(),
+        id: this.store.state.user.id,
         name: this.nom,
         firstname: this.prenom,
         phone: this.phone,

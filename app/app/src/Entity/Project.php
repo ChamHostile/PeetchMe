@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
+#[ApiResource()]
 class Project
 {
     #[ORM\Id]
@@ -29,13 +31,14 @@ class Project
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $field = null;
 
-    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Skills::class)]
+    #[ORM\ManyToMany(targetEntity: Skills::class)]
     private Collection $skills;
 
     public function __construct()
     {
         $this->skills = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -102,7 +105,6 @@ class Project
     {
         if (!$this->skills->contains($skill)) {
             $this->skills->add($skill);
-            $skill->setProject($this);
         }
 
         return $this;
@@ -110,12 +112,7 @@ class Project
 
     public function removeSkill(Skills $skill): self
     {
-        if ($this->skills->removeElement($skill)) {
-            // set the owning side to null (unless already changed)
-            if ($skill->getProject() === $this) {
-                $skill->setProject(null);
-            }
-        }
+        $this->skills->removeElement($skill);
 
         return $this;
     }

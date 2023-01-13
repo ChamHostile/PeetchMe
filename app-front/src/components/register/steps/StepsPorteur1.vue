@@ -51,7 +51,7 @@ import store from '../../../store'
         this.$store.commit('storeRegister', {
           email: this.email,
           password: this.password,
-          type: 1
+          type: 2
         });
       }
     }

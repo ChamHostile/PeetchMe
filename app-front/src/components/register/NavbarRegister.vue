@@ -14,6 +14,9 @@
 export default {
   name: 'NavbarRegister',
   data () {
+    return {
+        
+    }
   }
 }
 </script>

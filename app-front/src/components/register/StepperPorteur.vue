@@ -43,7 +43,7 @@
         v-if="step < (steps.length - 1)"
         style="background-color:#3F3FA6"
         class="ml-2 text-white"
-        @click="nextStep(); createAccount(); loginRegister(); "
+        @click="createAccount(); nextStep();loginRegister(); "
         :disabled="loading"
       >
         Valider
@@ -173,8 +173,12 @@ export default {
     },
     createAccount() {
       const self = this
-      if (this.step === 1) {
-        this.store.dispatch('createAccount').then(function() {})
+      if (this.step === 0) {
+        this.store.dispatch('createAccount').then(function(response) {
+          if (response.status === 200) {
+
+          }
+        })
       }
     },
     loginRegister() {
@@ -185,6 +189,7 @@ export default {
             password: this.store.state.userRegister.password,
         }).then( (response) => {
           console.log('logged in')
+          console.log(response)
         })
       }
     },

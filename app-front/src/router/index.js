@@ -10,6 +10,17 @@ import SearchResultSearcher from '@/components/espace-chercheur/SearchResultsSea
 import HomePorteur from '@/components/espace-porteur/HomePorteur'
 import Login from '@/components/LoginComponent'
 import DashboardSearcher from '@/components/espace-chercheur/DashboardSearcher'
+import DashboardPorteur from '@/components/espace-porteur/DashboardPorteur'
+import SearchResultPorteur from '@/components/espace-porteur/SearchResultsPorteur'
+import DetailProjectComponent from '@/components/espace-porteur/DetailProjectComponent'
+import DetailSearcherComponent from '@/components/espace-chercheur/DetailSearcher'
+import SearcherUpdate from '@/components/espace-chercheur/SearcherUpdate'
+import RegistrationForm from '@/components/register/steps/RegistrationForm'
+import RegisterInfos from '@/components/register/steps/RegisterInfos'
+import RegisterPersonal from '@/components/register/steps/RegisterPersonal'
+
+
+
 
 import Vuex from 'vuex'
 
@@ -29,19 +40,19 @@ export default new Router({
       component: RegisterComponent
     },
     {
-      path: '/register/searcher',
-      name: 'RegisterSeacher',
-      component: RegisterSearcher
+      path: '/register/create',
+      name: 'RegistrationForm',
+      component: RegistrationForm
     },
     {
-      path: '/register/porteur',
-      name: 'RegisterPorteur',
-      component: RegisterPorteur
+      path: '/register/infos',
+      name: 'RegisterInfos',
+      component: RegisterInfos
     },
     {
-      path: '/register/subscription',
-      name: 'RegisterSubscription',
-      component: RegisterSubscription
+      path: '/register/perso',
+      name: 'RegisterPersonal',
+      component: RegisterPersonal
     },
     {
       path: '/searcher/home',
@@ -67,6 +78,32 @@ export default new Router({
       path: '/dashboardSearcher',
       name: 'DashboardSearcher',
       component: DashboardSearcher
+    },
+    {
+      path: '/dashboardPorteur',
+      name: 'DashboardPorteur',
+      component: DashboardPorteur
+    },
+    {
+      path: '/porteur/results',
+      name: 'SearchResultPorteur',
+      component: SearchResultPorteur
+    },
+    {
+      path: '/project/:id',
+      name: 'DetailProject',
+      component: DetailProjectComponent
+    },
+    {
+      path: '/chercheur/:id',
+      name: 'DetailSearcher',
+      component: DetailSearcherComponent
+    },
+    {
+      path: '/user/update',
+      name: 'SearcherUpdate',
+      component: SearcherUpdate
     }
+    
   ]
 })

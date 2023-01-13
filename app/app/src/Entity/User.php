@@ -3,65 +3,121 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use App\Controller\MeController;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\CollectionOperationInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use ApiPlatform\Doctrine\Odm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:User']]),
-]
-     
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
+    openapiContext:  [
+        'security' => [['bearerAuth' =>  []]]
+    ],
+    operations: [
+        new GetCollection(),
+        new Post(processor: UserPasswordHasher::class),
+        new Get(),
+        new Put(processor: UserPasswordHasher::class),
+        new Patch(processor: UserPasswordHasher::class),
+        new Delete()
+    ]
+    )
+
+    ]
+#[Get(
+    name: 'me',
+    controller: MeController::class,
+    read: false,
+    uriTemplate: '/me',
+    paginationEnabled: false, 
+    openapiContext: [
+        'security' => [['bearerAuth' => []]]
+    ]
+)]
+
+class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:User'])]
+    #[Groups(['read'])]
     private ?int $id = null;
 
+    #[Groups(['read, write'])]
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:User'])]
     private ?string $email = null;
 
+    #[ORM\ManyToMany(targetEntity: Skills::class)]
+    #[Groups(['read, write'])]
+    private Collection $skills;
+
     #[ORM\Column]
+    #[Groups(['read, write'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['write'])]
     private ?string $password = null;
 
+    #[Groups(['read', 'write'])]
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:User'])]
     private ?int $age = null;
 
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:User'])]
     private ?string $nom = null;
 
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:User'])]
     private ?string $prenom = null;
 
-    #[Groups(['read:User'])]
+    #[Groups(['read', 'write'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
+    #[Groups(['read', 'write'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $experience = null;
+
+    #[Groups(['read', 'write'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $secteur = null;
+
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $telephone = null;
 
-    #[ORM\Column]
-    #[Groups(['read:User'])]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read'])]
     private ?int $user_type = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:User'])]
+    #[Groups(['read', 'write'])]
     private ?int $subscription_type = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -70,6 +126,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): self  
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -149,6 +212,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getSecteur(): ?int
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?int $secteur): self
+    {
+        $this->secteur = $secteur;
+
+        return $this;
+    }
     public function getNom(): ?string
     {
         return $this->nom;
@@ -164,6 +238,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPrenom(): ?string
     {
         return $this->prenom;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setExperience(string $experience): self
+    {
+        $this->experience = $experience;
+
+        return $this;
+    }
+
+    public function getExperience(): ?string
+    {
+        return $this->experience;
     }
 
     public function setPrenom(string $prenom): self
@@ -219,5 +317,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->created_at = $created_at;
 
         return $this;
+    }
+
+        /**
+     * @return Collection<int, Skills>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skills $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skills $skill): self
+    {
+        $this->skills->removeElement($skill);
+
+        return $this;
+    }
+
+    public static function createFromPayload($id, array $payload)
+    {
+        return (new User())->setId($id);
     }
 }

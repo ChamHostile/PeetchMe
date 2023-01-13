@@ -1,39 +1,70 @@
 <template>
   <div class="container-fluid m-0 p-0 bg-light">
     <NavbarConnected></NavbarConnected>
+    <div class="row">
+    <SideBarComponent></SideBarComponent>
+    <div class="col-11">
     <div class="container section-dashboard">
+
+    <DahsboardMenu class="text-center"></DahsboardMenu>
+    
       <div class="d-flex align-items-start" style="margin-top: 133px;">
-        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-          <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Profil</button>
-          <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Bibliothèque</button>
-          <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Message</button>
-          <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Paramètres</button>
-          <button class="nav-link logout">Déconnexion</button>
-        </div>
-        <div class="col tab-content shadow-sm" id="v-pills-tabContent">
+        <div class="col tab-content" id="v-pills-tabContent">
           <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-            <div class="row mx-auto mb-2">
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4" style="border-radius: 20px !important;">
               <div class="userPerso col-4">
                 <div class="row">
-                  <img src="../../assets/img/blondefemale.png" class="sm-img">
-                  <div class=" col-2">
-                    <p>{{user.nom}} {{user.prenom}}</p>
-                    <p>Chercheur de projet</p>
+                  <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
+                  <div class=" col-3">
+                    <p class="font-weight-bold">{{user.prenom}}</p>
+                    <p style="color:orange !important;">Metier</p>
+                    <p class="text-muted">Localisation Non renseignée</p>
                   </div>
                 </div>
               </div>
-              <div class="subscribe offset-4 col-3">
-                <p>Abonnement</p>
+              <div class="subscribe offset-4 col-3 d-flex align-items-center">
+                <p>Chercheur de projet</p>
                 <p v-if="user.subscription_type == 2">Premium</p> 
                 <p v-else></p>
               </div>
             </div> 
-            <div class="container row text-center infos">
-              <input type="text" disabled class="col-12 mx-auto input" placeholder="Présentation">
-              <input type="text" disabled class="col-6 mx-auto input mr-3" placeholder="Compétences">
-              <input type="text" disabled class="col-6 mx-auto input" placeholder="Soft skills">
-              <input type="text" disabled class="col-6 mx-auto input mr-3" placeholder="Qualités">
-              <input type="text" disabled class="col-6 mx-auto input" placeholder="Défaults" >
+            <div class="container row text-center">
+              <div class="col-6">
+                <div>
+                  <p class="text-center">
+                    Description
+                  </p>
+                  <p> {{  user.description }}</p>
+                </div>
+                <div>
+                  <p class="text-center">
+                    Compétences
+                  </p>
+                  <p> {{  user.skills }}</p>
+                </div>
+                <div>
+                  <p class="text-center">
+                    Soft Skills
+                  </p>
+                  <p> {{  user.description }}</p>
+                </div>
+    
+              </div>
+
+              <div class="col-6">
+                <div>
+                  <p class="text-center">
+                    Experience
+                  </p>
+                  <p> {{  user.experience }}</p>
+                </div>  
+                <div>
+                  <p class="text-center">
+                    Secteur d'activité
+                  </p>
+                  <p> {{  user.secteur }}</p>
+                </div>
+              </div>
             </div>
           </div>
           <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
@@ -42,21 +73,24 @@
         </div>
       </div>
     </div>
-
+</div>
+</div>
     <Footer class="mt-5"></Footer>
   </div>
 </template>
 <script>
 import NavbarConnected from '../register/NavbarConnected.vue'
 import Footer from '../Footer.vue'
+import SideBarComponent from '../SideBarComponent.vue'
+import DahsboardMenu from '../DahsboardMenu.vue'
 
-console.log(JSON.parse(localStorage.getItem("user")).user.user)
+// console.log(JSON.parse(localStorage.getItem("user")).user.user)
 export default {
   name: 'DashboardSearcher',
-  components: {NavbarConnected, Footer},
+  components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu},
   data() {
     return {
-      user: JSON.parse(localStorage.getItem("user")).user.user
+      user: JSON.parse(localStorage.getItem("user"))
     }
   }
 }
@@ -86,6 +120,21 @@ export default {
   height: 116px;
   border-radius: 15px;
   text-align: center; 
+}
+
+.col-6 div {
+  padding-top: 4px;
+  padding-bottom: 12px;
+
+  background: white;
+  border-radius: 20px !important;
+  margin-top: 20px;
+  box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
+}
+
+.col-6 div p{
+  color: #9F9F9F;
+  height: 16px;
 }
 
 .input{

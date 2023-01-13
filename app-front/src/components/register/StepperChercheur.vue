@@ -194,7 +194,7 @@ export default {
       const self = this
       this.store.dispatch("editAccount", {}).then(function (response) {
           if (response.status === 200 ) {
-            self.$router.push({path: '/register/subscription', replace: true})
+            self.$router.push({path: '/searcher/home', replace: true})
           }
           console.log(response);
       });
