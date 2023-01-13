@@ -75,11 +75,15 @@ class SecurityController extends AbstractController
         $currentUser->setNom($jsonData->data->name);
         $currentUser->setPrenom($jsonData->data->firstname);
         if (isset($jsonData->data->phone)) $currentUser->setTelephone($jsonData->data->phone);
-        if (isset($jsonData->data->experience)) $currentUser->setExperience($jsonData->data->experience);
-        if (isset($jsonData->data->secteur)) $currentUser->setSecteur($jsonData->data->secteur);
         if (isset($jsonData->data->age)) $currentUser->setAge(intval($jsonData->data->age));
 
         $em->persist($currentUser);
+      }
+
+      if (isset($jsonData->data->description)) {
+        if (isset($jsonData->data->experience)) $currentUser->setExperience($jsonData->data->experience);
+        if (isset($jsonData->data->secteur)) $currentUser->setSecteur($jsonData->data->secteur);
+        if (isset($jsonData->data->description)) $currentUser->setDescription($jsonData->data->description);
       }
   
       $address = $this->addressRepository->findOneBy(['user_id' => $currentUser->getId()]);

@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       store,
-      userId: JSON.parse(localStorage.getItem("user")),
+      userId: this.$route.params.id,
       user: {},
       skills:  [],
       skillsId: []
@@ -84,7 +84,7 @@ export default {
   created() {
     let self = this
       this.store.dispatch("getUserFull", {
-        id: self.userId.id
+        id: self.userId
       }).then( (response) => {
           self.user = response.data.user
           var skills = response.data.skills

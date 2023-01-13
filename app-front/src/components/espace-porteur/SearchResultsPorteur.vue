@@ -5,7 +5,6 @@
     <SideBarComponent></SideBarComponent>
     <div class="col-11">
     <section style="overflow-x:hidden !important;">
-      <p class="text-left my-5 offre">Vous êtes porteur de projet</p>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
         <div class="col-10 mr-5 mt-5 mb-3" style="overflow:hidden;">
           <label for="searcher-filter-input">Affiner votre recherche</label>

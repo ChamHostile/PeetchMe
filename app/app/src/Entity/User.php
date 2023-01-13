@@ -65,8 +65,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[Groups(['read'])]
     private ?int $id = null;
 
-    #[Groups(['read, write'])]
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['read, write'])]
     private ?string $email = null;
 
     #[ORM\ManyToMany(targetEntity: Skills::class)]
@@ -84,32 +84,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[Groups(['write'])]
     private ?string $password = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?int $age = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?string $nom = null;
 
     #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $prenom = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?string $description = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?string $experience = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?string $secteur = null;
 
-    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read', 'write'])]
     private ?string $telephone = null;
 
     #[ORM\Column(nullable: true)]

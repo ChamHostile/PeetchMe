@@ -41,7 +41,7 @@
               <input class="form-control" placeholder="Retapez votre mot de passe" type="password">
             </div>
             <div class="">
-              <button class="btn valider text-white form-control mt-4 rounded" @click="(prepareAccount())">Inscription</button>
+              <button class="btn valider text-white form-control mt-4 rounded" @click.prevent="(prepareAccount())">Inscription</button>
             </div>
 
           </form>

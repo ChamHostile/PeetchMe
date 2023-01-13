@@ -2,10 +2,9 @@
   <div class="container-fluid m-0 p-0 bg-light" style="overflow-x:hidden">
     <NavbarConnected></NavbarConnected>
     <div class="row">
-    <SideBarComponent></SideBarComponent>
+    <SideBarComponentVue></SideBarComponentVue>
     <div class="col-11">
     <section style="overflow-x:hidden !important;">
-      <p class="text-left my-5 offre">Vous êtes chercheur de projet</p>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
         <div class="col-7 mr-5">
           <label for="searcher-search-input">Rechercher un domaine technique/métier afin d’afficher les projets adaptés à votre besoin</label>

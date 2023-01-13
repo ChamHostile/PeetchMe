@@ -12,7 +12,7 @@
          </p> 
         </div>
         <div class="d-flex align-items-center mx-auto text-center">  
-         <h3 class="text-dark col mb-5">Alimentez votre profil</h3>
+         <h3 class="text-dark col mb-5">Les essentiels</h3>
         </div>
         <div class="d-flex align-items-center justify-content-center">
           <form class="w-75">
