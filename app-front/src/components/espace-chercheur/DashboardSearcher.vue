@@ -8,7 +8,7 @@
 
     <DahsboardMenu class="text-center"></DahsboardMenu>
     
-      <div class="d-flex align-items-start" style="margin-top: 133px;">
+      <div class="d-flex align-items-start mt-4">
         <div class="col tab-content" id="v-pills-tabContent">
           <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
             <div class="row mx-auto mb-2 shadow-sm bg-white p-4" style="border-radius: 20px !important;">

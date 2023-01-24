@@ -3,7 +3,7 @@
     <NavbarConnected></NavbarConnected>
     <div class="row">
     <SideBarComponent></SideBarComponent>
-    <div class="col-11">
+    <div class="col-11" style="margin-top: 120px;">
     <section style="overflow-x:hidden !important;">
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
         <div class="col-7 mr-5">
