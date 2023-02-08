@@ -6,15 +6,20 @@
     <div class="col-11">
     <div class="container section-dashboard">
 
-    <DahsboardMenu class="text-center"></DahsboardMenu>
+    <DahsboardMenu class="text-center" @tab="getTab"></DahsboardMenu>
     
+      <div class="d-flex justify-content-end">
+        <a href="#" style="text-decoration: none; color:#9F9F9F;"><img src="../../assets/img/modifier.svg">  Modifier</a>
+      </div>
       <div class="d-flex align-items-start mt-4">
-        <div class="col tab-content" id="v-pills-tabContent">
-          <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+        <div class="col tab-content" id="v-pills-tabContent" v-if="tabNum == 1">
+          <div class="show active">
             <div class="row mx-auto mb-2 shadow-sm bg-white p-4" style="border-radius: 20px !important;">
               <div class="userPerso col-4">
                 <div class="row">
+                  <div class="col-8">
                   <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
+                  </div>
                   <div class=" col-3">
                     <p class="font-weight-bold">{{user.prenom}}</p>
                     <p style="color:orange !important;">Metier</p>
@@ -28,7 +33,7 @@
                 <p v-else></p>
               </div>
             </div> 
-            <div class="container row text-center">
+            <div class="row text-center">
               <div class="col-6">
                 <div>
                   <p class="text-center">
@@ -62,15 +67,37 @@
                   <p class="text-center">
                     Secteur d'activité
                   </p>
-                  <p> {{  user.secteur }}</p>
+                  <p> {{ user.secteur }}</p>
                 </div>
               </div>
             </div>
           </div>
-          <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
-          <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
-          <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
         </div>
+
+        <div class="col tab-content" id="v-pills-tabContent" v-if="tabNum == 2">
+          <div class="show active">
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4" style="border-radius: 20px !important;">
+              <div class="userPerso col-4">
+                <div class="row">
+                  <div class="col-8">
+                  <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
+                  </div>
+                  <div class=" col-3">
+                    <p class="font-weight-bold">{{user.prenom}}</p>
+                    <p style="color:orange !important;">Metier</p>
+                    <p class="text-muted">Localisation Non renseignée</p>
+                  </div>
+                </div>
+              </div>
+              <div class="subscribe offset-4 col-3 d-flex align-items-center">
+                <p>Chercheur de projet</p>
+                <p v-if="user.subscription_type == 2">Premium</p> 
+                <p v-else></p>
+              </div>
+            </div> 
+          </div>
+        </div>
+
       </div>
     </div>
 </div>
@@ -90,9 +117,40 @@ export default {
   components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu},
   data() {
     return {
-      user: JSON.parse(localStorage.getItem("user"))
+      user: JSON.parse(localStorage.getItem("user")),
+      tabNum: 1,
+      edit: 0,
+      userDescription: "",
+      userExp: "",
+      skills: "",
+      secteur: "",
+      softskills: "",
+      tabClass: "tabActive"
     }
-  }
+  },
+  methods: {
+    getTab(value) {
+      console.log(value)
+      return this.tabNum = value
+    },
+    changeTab(tabNum) {
+      return this.tabNum = tabNum;
+    },
+    modeEdit() {
+      if (this.edit !== 1) {
+        return this.edit = 1
+      }
+    },
+    editData() {
+
+    },
+    setUserType() {
+
+    }
+  },
+  computed: {
+    
+  },
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -140,5 +198,11 @@ export default {
 .input{
   margin-top: 20px;
   background-color: white !important;
+}
+a:hover{
+  text-decoration: none;
+}
+a:active{
+  text-decoration:none; 
 }
 </style>

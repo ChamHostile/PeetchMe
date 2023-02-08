@@ -25,17 +25,21 @@
     <section style="overflow-x:hidden !important; margin-bottom: 150px;" class="mt-5 mx-5">
       <h6 class="projects">Résultats en fonction de votre recherche</h6>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
-        <div class="col-4" v-for="project in projects">
-          <div class="card shadow-sm p-0" @click="goToDetail(project.id)">
+        <div class="col-4 mt-2 mb-4" v-for="project in projects">
+          <div class="card shadow p-0" @click="goToDetail(project.id) ">
             <img src="../../assets/img/project.png" class="card-img-top" alt="...">
+            <span class="rounded text-white font-weight-normal p-2" style="background-color: #F37332; position:absolute;">{{ project.name }}</span>
             <div class="card-body">
-              <p class="card-text">{{ project.description }}</p>
+              <p class="card-text">{{project.description}}</p>
             </div>
           </div>
         </div>
-        <div class="col-8 mt-5 d-flex justify-content-end">
-         <p>{{ currentPage }} </p> sur {{maxPage}}
-        </div>
+      </div>
+      <div class="row">
+          <div class="col-8 mt-5 d-flex justify-content-center">
+          <p>{{ currentPage }} </p> sur {{maxPage}}
+          </div>
+        
         <div class="col-4 mt-5 d-flex justify-content-end">
           <p>Page suivante > </p>
         </div>

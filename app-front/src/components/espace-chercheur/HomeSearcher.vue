@@ -4,11 +4,11 @@
     <div class="row">
     <SideBarComponentVue></SideBarComponentVue>
     <div class="col-11">
-    <section style="overflow-x:hidden !important;">
+      <section style="overflow-x:hidden !important; border-radius: 20px !important;" class="bg-white shadow-sm m-5">
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
-        <div class="col-7 mr-5">
-          <label for="searcher-search-input">Rechercher un domaine technique/métier afin d’afficher les projets adaptés à votre besoin</label>
-          <div class="input-group col-md-9 mx-auto">
+        <div class="col-10 mr-5 p-3 pt-5">
+          <label for="searcher-search-input" class="font-weight-bold">Rechercher un domaine technique/métier afin d’afficher les projets adaptés à votre besoin</label>
+          <div class="input-group col-md-12 mx-auto">
             <input class="form-control py-2" type="search" placeholder="Rechercher">
             <span class="input-group-append">
               <button class="btn btn-secondary" type="button">
@@ -20,57 +20,68 @@
           </div>
         </div>
       </div>
-      <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
-        <div class="col-10 mr-5 mt-5 mb-3" style="overflow:hidden;">
-          <label for="searcher-filter-input">Affiner votre recherche</label>
-          <div class="row d-flex justify-content-center">
-            <div class="col-2">
-              <label class="form-label">Domaine d'étude</label>
-              <select class="form-control form-select" aria-label="Default select example">
-                  <option selected></option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
-              </div>
+        <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
+          <div class="col-12 mt-2 mb-5" style="overflow:hidden;">
+            <label for="searcher-filter-input mt-2" class="font-weight-bold">Affiner votre recherche</label>
+            <div class="row d-flex justify-content-center">
               <div class="col-2">
-              <label>Pertinence</label>
-              <select class="form-control form-select" aria-label="Default select example">
-                  <option selected></option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
-              </div>
-              <div class="col-2">
-              <label>Date de publication</label>
-              <select class="form-control form-select" aria-label="Default select example">
-                  <option selected></option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
-              </div>
-              <div class="col-2">
-                <label>Lieu/distance</label>
+                <label class="form-label">Secteur d'activité</label>
                 <select class="form-control form-select" aria-label="Default select example">
                     <option selected></option>
                     <option value="1">One</option>
                     <option value="2">Two</option>
                     <option value="3">Three</option>
-                </select>
-              </div>
-            <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;">Afficher les projets</div>
+                  </select>
+                </div>
+                <div class="col-2">
+                <label>Type de marché</label>
+                <select class="form-control form-select" aria-label="Default select example">
+                    <option selected></option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                <label>Atout du projet</label>
+                <select class="form-control form-select" aria-label="Default select example">
+                    <option selected></option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                <label>Etat du projet</label>
+                <select class="form-control form-select" aria-label="Default select example">
+                    <option selected></option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                <label>Localisation</label>
+                <select class="form-control form-select" aria-label="Default select example">
+                    <option selected></option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+              <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;">Afficher les projets</div>
+            </div>
           </div>
         </div>
-      </div>
     </section>
     <section style="overflow-x:hidden !important;" class="mt-5 mx-5">
       <h6 class="projects">Ces projets pourraient vous intéresser</h6>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
         <div class="col-4" v-for="project in projects">
-          <div class="card shadow-sm p-0" @click="goToDetail(project.id) ">
+          <div class="card shadow p-0" @click="goToDetail(project.id) ">
             <img src="../../assets/img/project.png" class="card-img-top" alt="...">
+            <span class="rounded text-white font-weight-normal p-2" style="background-color: #F37332; position:absolute;">{{ project.name }}</span>
+
             <div class="card-body">
               <p class="card-text">{{project.description}}</p>
             </div>
@@ -111,7 +122,7 @@
           </div>
         </div>
         <div class="col mt-2 d-flex justify-content-end">
-          <p>Voir plus...</p>
+          <a class="btn btn-secondary text-white p-2 rounded">Voir plus...</a>
         </div>
       </div>
     </section>

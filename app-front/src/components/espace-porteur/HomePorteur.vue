@@ -7,8 +7,8 @@
 
     <section style="overflow-x:hidden !important; border-radius: 20px !important;" class="bg-white shadow-sm m-5">
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
-        <div class="col-7 mr-5">
-          <label for="searcher-search-input">Rechercher un domaine technique/métier afin d’afficher les associés idéal</label>
+        <div class="col-7 mr-5 p-3 pt-5">
+          <label for="searcher-search-input" class="font-weight-bold">Rechercher un domaine technique/métier afin d’afficher les associés idéal</label>
           <div class="input-group col-md-9 mx-auto">
             <input class="form-control py-2" type="search" placeholder="Rechercher">
             <span class="input-group-append">
@@ -22,11 +22,11 @@
         </div>
       </div>
         <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
-          <div class="col-10 mr-5 mt-5 mb-3" style="overflow:hidden;">
-            <label for="searcher-filter-input">Affiner votre recherche</label>
+          <div class="col-12 mt-2 mb-5" style="overflow:hidden;">
+            <label for="searcher-filter-input mt-2" class="font-weight-bold">Affiner votre recherche</label>
             <div class="row d-flex justify-content-center">
               <div class="col-2">
-                <label class="form-label">Domaine d'étude</label>
+                <label class="form-label">Expérience</label>
                 <select class="form-control form-select" aria-label="Default select example">
                     <option selected></option>
                     <option value="1">One</option>
@@ -35,7 +35,7 @@
                   </select>
                 </div>
                 <div class="col-2">
-                <label>Catégorie de service</label>
+                <label>Secteur d'activité</label>
                 <select class="form-control form-select" aria-label="Default select example">
                     <option selected></option>
                     <option value="1">One</option>
@@ -44,7 +44,7 @@
                   </select>
                 </div>
                 <div class="col-2">
-                <label>Lieu/Distance</label>
+                <label>Compétences</label>
                 <select class="form-control form-select" aria-label="Default select example">
                     <option selected></option>
                     <option value="1">One</option>
@@ -52,7 +52,16 @@
                     <option value="3">Three</option>
                   </select>
                 </div>
-              <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;">Rechercher votre associé</div>
+                <div class="col-2">
+                <label>Localisation</label>
+                <select class="form-control form-select" aria-label="Default select example">
+                    <option selected></option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+              <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;">Afficher les projets</div>
             </div>
           </div>
         </div>
@@ -79,10 +88,11 @@
         <div class="col-4" v-for="chercheur in chercheurs">
           <a @click="goToDetail(chercheur.id)" style="text-decoration: none; color:inherit;">
           <div class="card shadow-sm p-0" v-if="chercheur.nom && chercheur.prenom">
-            <div class="section mt-3">
+            <div class="section mt-3 px-5">
               <div class="row mx-auto">
-                <img src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%;">
-                <div class="text col-7" style="font-weight: normal !important; background: #E2E2E2; border-radius: 0px 30px 30px 0px;">
+                <img v-if="chercheur.photo" src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%; z-index:200 !important; position:absolute !important;">
+                <img v-else="chercheur.photo" src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%; z-index:200 !important; position:absolute !important;">
+                <div class="text col-7" style="font-weight: normal !important; background: #E2E2E2; border-radius: 0px 30px 30px 0px; position:relative; left:0px;">
                 <p class="text-dark">{{ chercheur.prenom }}</p>
                 <p> Metier </p>
                 </div>
