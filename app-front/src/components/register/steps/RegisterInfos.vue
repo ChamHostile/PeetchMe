@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       skillsList: [
-        {id: 'skill1', name: 'Skill1'},
+        {id: 'skill1', name: 'Skill1'}, 
         {id: 'skill2', name: 'Skill2'},
         {id: 'skill3', name: 'Skill3'},
         {id: 'skill4', name: 'Skill4'},

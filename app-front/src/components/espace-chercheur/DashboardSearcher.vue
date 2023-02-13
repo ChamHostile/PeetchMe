@@ -8,8 +8,8 @@
 
     <DahsboardMenu class="text-center" @tab="getTab"></DahsboardMenu>
     
-      <div class="d-flex justify-content-end">
-        <a href="#" style="text-decoration: none; color:#9F9F9F;"><img src="../../assets/img/modifier.svg">  Modifier</a>
+      <div class="d-flex justify-content-end" v-if="tabNum == 1">
+        <a href="" @click.prevent="modeEdit()" style="text-decoration: none; color:#9F9F9F;"><img src="../../assets/img/modifier.svg">  Modifier</a>
       </div>
       <div class="d-flex align-items-start mt-4">
         <div class="col tab-content" id="v-pills-tabContent" v-if="tabNum == 1">
@@ -28,72 +28,77 @@
                 </div>
               </div>
               <div class="subscribe offset-4 col-3 d-flex align-items-center">
-                <p>Chercheur de projet</p>
+              <div v-if="!user.user_type">
+                <p class="font-weight-bold" style="color: #F37332;">
+                  Etes-vous porteur ou chercheur de projet ?
+                </p>
+                <button class="btn btn-primary">
+                  Choisir votre profil
+                </button>
+              </div>
                 <p v-if="user.subscription_type == 2">Premium</p> 
                 <p v-else></p>
               </div>
             </div> 
             <div class="row text-center">
               <div class="col-6">
-                <div>
+                <div v-if="edit==0">
                   <p class="text-center">
                     Description
                   </p>
                   <p> {{  user.description }}</p>
                 </div>
-                <div>
+                <div v-else>
+                  <input type="text" v-model="userDescription">
+                </div>
+                <div v-if="edit==0">
                   <p class="text-center">
                     Compétences
                   </p>
                   <p> {{  user.skills }}</p>
                 </div>
-                <div>
+                <div v-else>
+                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos compétences" mode="CheckBox" class="form-control text-center" v-model="skills"></ejs-multiselect>
+                </div>
+                <div v-if="edit==0">
                   <p class="text-center">
                     Soft Skills
                   </p>
-                  <p> {{  user.description }}</p>
+                  <p> {{  user.skills }}</p>
                 </div>
-    
+                <div v-else>
+                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos soft skills" mode="CheckBox" class="form-control text-center" v-model="softSkills"></ejs-multiselect>   
+                </div>
               </div>
 
               <div class="col-6">
-                <div>
+                <div v-if="edit==0">
                   <p class="text-center">
                     Experience
                   </p>
                   <p> {{  user.experience }}</p>
                 </div>  
-                <div>
+                <div v-else>
+                  <input type="text">
+                </div>
+                <div v-if="edit==0">
                   <p class="text-center">
                     Secteur d'activité
                   </p>
                   <p> {{ user.secteur }}</p>
+                </div>
+                <div v-else>
+                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs"></ejs-multiselect>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col tab-content" id="v-pills-tabContent" v-if="tabNum == 2">
+        <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 2">
           <div class="show active">
-            <div class="row mx-auto mb-2 shadow-sm bg-white p-4" style="border-radius: 20px !important;">
-              <div class="userPerso col-4">
-                <div class="row">
-                  <div class="col-8">
-                  <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
-                  </div>
-                  <div class=" col-3">
-                    <p class="font-weight-bold">{{user.prenom}}</p>
-                    <p style="color:orange !important;">Metier</p>
-                    <p class="text-muted">Localisation Non renseignée</p>
-                  </div>
-                </div>
-              </div>
-              <div class="subscribe offset-4 col-3 d-flex align-items-center">
-                <p>Chercheur de projet</p>
-                <p v-if="user.subscription_type == 2">Premium</p> 
-                <p v-else></p>
-              </div>
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
+              <p>Aucun projets enregistrés</p>
             </div> 
           </div>
         </div>
@@ -122,10 +127,20 @@ export default {
       edit: 0,
       userDescription: "",
       userExp: "",
-      skills: "",
-      secteur: "",
-      softskills: "",
-      tabClass: "tabActive"
+      userSkill: "",
+      userField: "",
+      userSoftskills: "",
+      tabClass: "tabActive",
+      skillsList: [
+        {id: 'skill1', name: 'Skill1'},
+        {id: 'skill2', name: 'Skill2'},
+        {id: 'skill3', name: 'Skill3'},
+        {id: 'skill4', name: 'Skill4'},
+      ],
+      fields: {text: 'name', value:'id'},
+      skills: [],
+      softSkills: [],
+      secteurs: []
     }
   },
   methods: {
@@ -137,6 +152,7 @@ export default {
       return this.tabNum = tabNum;
     },
     modeEdit() {
+      console.log(this.edit)
       if (this.edit !== 1) {
         return this.edit = 1
       }
@@ -188,6 +204,10 @@ export default {
   border-radius: 20px !important;
   margin-top: 20px;
   box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
+}
+
+.col-6 div input {
+  border: 0px;
 }
 
 .col-6 div p{
