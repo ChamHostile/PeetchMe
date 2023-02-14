@@ -52,6 +52,9 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         instance.post('/registerEdit', state.userInfos)
         .then(function (response) {
+          commit("setUser", {
+            user: response.data
+          })
           resolve(response)
         })
         .catch(function (error) {
@@ -63,9 +66,14 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         instance.post('/registerEdit', editInfos)
         .then(function (response) {
+          console.log(response.data)
+          commit("setUser", {
+            user: response.data
+          })
           resolve(response)
         })
         .catch(function (error) {
+          console.log(error)
           reject(error)
         })  
       })
@@ -229,7 +237,7 @@ const store = new Vuex.Store({
       localStorage.setItem('user', JSON.stringify(user))
       state.user = user
     },
-    setProject: function (state, user) {
+    setProject: function (state, project) {
       localStorage.setItem('project', JSON.stringify(project))
       state.project = project
     },

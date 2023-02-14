@@ -9,7 +9,11 @@
     <DahsboardMenu class="text-center" @tab="getTab"></DahsboardMenu>
     
       <div class="d-flex justify-content-end" v-if="tabNum == 1">
-        <a href="" @click.prevent="modeEdit()" style="text-decoration: none; color:#9F9F9F;"><img src="../../assets/img/modifier.svg">  Modifier</a>
+        <a href="" @click.prevent="modeEdit()" style="text-decoration: none; color:#9F9F9F;" v-if="edit == 0"><img src="../../assets/img/modifier.svg">  Modifier</a>
+        <div v-else>
+          <a href="" @click.prevent="cancelEdit()" class="btn btn-secondary text-white" style="text-decoration: none;"><img src="../../assets/img/cancel.svg">  Annuler</a>
+          <a href="" @click.prevent="editAccount()" class="btn btn-primary text-white" style="text-decoration: none;"><img src="../../assets/img/confirm.svg">  Sauvegarder</a>
+        </div>
       </div>
       <div class="d-flex align-items-start mt-4">
         <div class="col tab-content" id="v-pills-tabContent" v-if="tabNum == 1">
@@ -32,13 +36,32 @@
                 <p class="font-weight-bold" style="color: #F37332;">
                   Etes-vous porteur ou chercheur de projet ?
                 </p>
-                <button class="btn btn-primary">
+                <button @click.prevent="selectType()" class="btn btn-primary">
                   Choisir votre profil
                 </button>
+              </div>
+              <div v-else>
+                <p class="font-weight-bold" style="color: #F37332;">
+                  {{user.user_type}}
+                </p>
               </div>
                 <p v-if="user.subscription_type == 2">Premium</p> 
                 <p v-else></p>
               </div>
+              <div class="row" v-if="choseType">
+                  <div class="col-6 p-5">
+                    <p>Vous êtes</p>
+                    <h2 class="text-white">porteur de projet ?</h2>
+                    <p>Profitez de la plateforme pour déposez votre pitch de présentation de projet et sélectionnez vos profils d’associés coup de cœur parmi une liste en un seul clic.</p>
+                    <button class="btn btn-primary p-2">Je suis porteur de projet</button>
+                  </div>
+                  <div class="col-6 p-5">
+                    <p>Vous êtes</p>
+                    <h2 class="text-white">chercheur de projet ?</h2>
+                    <p>Vous visionnez les pitchs et entrez directement en contact avec le porteur du projet qui vous intéresse.</p>
+                    <button class="btn btn-primary p-2 text-white">Je suis chercheur de projet</button>
+                  </div>
+                </div>
             </div> 
             <div class="row text-center">
               <div class="col-6">
@@ -115,6 +138,7 @@ import NavbarConnected from '../register/NavbarConnected.vue'
 import Footer from '../Footer.vue'
 import SideBarComponent from '../SideBarComponent.vue'
 import DahsboardMenu from '../DahsboardMenu.vue'
+import store from '../../store'
 
 // console.log(JSON.parse(localStorage.getItem("user")).user.user)
 export default {
@@ -122,9 +146,11 @@ export default {
   components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu},
   data() {
     return {
+      store,
       user: JSON.parse(localStorage.getItem("user")),
       tabNum: 1,
       edit: 0,
+      choseType: 0,
       userDescription: "",
       userExp: "",
       userSkill: "",
@@ -155,6 +181,33 @@ export default {
       console.log(this.edit)
       if (this.edit !== 1) {
         return this.edit = 1
+      }
+    },
+    editAccount() {
+      const self = this
+      this.store.dispatch("registerEdit", {
+        id: this.user.id,
+        skills: this.skills,
+        softSkills: this.softSkills,
+        secteurs: this.secteurs,
+        description: this.description
+      }).then(function (response) {
+        console.log(response)
+        if (response.status === 200 ) {
+          self.$router.go()
+        }  
+      });
+    },
+    cancelEdit() {
+      console.log(this.edit)
+      if (this.edit !== 0) {
+        return this.edit = 0
+      }
+    },
+    selectType() {
+      console.log(this.choseType)
+      if (this.choseType !== 1) {
+        return this.choseType = 1
       }
     },
     editData() {
