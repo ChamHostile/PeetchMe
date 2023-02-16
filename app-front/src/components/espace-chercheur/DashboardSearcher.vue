@@ -53,13 +53,13 @@
                     <p>Vous êtes</p>
                     <h2 class="text-white">porteur de projet ?</h2>
                     <p>Profitez de la plateforme pour déposez votre pitch de présentation de projet et sélectionnez vos profils d’associés coup de cœur parmi une liste en un seul clic.</p>
-                    <button class="btn btn-primary p-2">Je suis porteur de projet</button>
+                    <button class="btn btn-primary p-2" @click.prevent="setUserType(2)">Je suis porteur de projet</button>
                   </div>
                   <div class="col-6 p-5">
                     <p>Vous êtes</p>
                     <h2 class="text-white">chercheur de projet ?</h2>
                     <p>Vous visionnez les pitchs et entrez directement en contact avec le porteur du projet qui vous intéresse.</p>
-                    <button class="btn btn-primary p-2 text-white">Je suis chercheur de projet</button>
+                    <button class="btn btn-primary p-2 text-white" @click.prevent="setUserType(1)">Je suis chercheur de projet</button>
                   </div>
                 </div>
             </div> 
@@ -213,8 +213,17 @@ export default {
     editData() {
 
     },
-    setUserType() {
-
+    setUserType(type) {
+      const self = this
+      this.store.dispatch("setUserType", {
+        id: this.user.id,
+        type: type
+      }).then(function (response) {
+        console.log(response)
+        if (response.status === 200 ) {
+          self.$router.go()
+        }  
+      });
     }
   },
   computed: {

@@ -102,6 +102,21 @@ const store = new Vuex.Store({
         })  
       })
     },
+    setUserType: ({state}, data) => {
+      let url = '/user/setType'
+      return new Promise((resolve, reject) => {
+        instance.post(url, data)
+        .then(function (response) {
+          commit("setUser", {
+            user: response.data
+          })
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
     getProjects: async ({state}, userId) => {
       let url = '/match/porteurs'
       return new Promise((resolve, reject) => {

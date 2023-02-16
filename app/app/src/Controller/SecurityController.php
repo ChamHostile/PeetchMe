@@ -63,6 +63,19 @@ class SecurityController extends AbstractController
     ]);
   }
 
+  #[Route('/user/setType', name: 'set_user_type', methods: ['POST'])]
+  public function setUserType(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $jsonData = json_decode($request->getContent());
+    $currentUser = $this->userRepository->findOneBy(['id' => $jsonData->data->id]);
+    $currentUser->setUserType($jsonData->type);
+    $em = $doctrine->getManager();
+    $em->persist($currentUser);
+    return $this->json([
+      'user'=> $currentUser
+    ]);
+  }
+
   #[Route('/registerEdit', name: 'user_register_edit', methods: ['POST'])]
   public function registerEdit(Request $request, ManagerRegistry $doctrine) : JsonResponse
   {
