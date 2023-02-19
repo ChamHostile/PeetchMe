@@ -42,7 +42,7 @@
               </div>
               <div v-else>
                 <p class="font-weight-bold" style="color: #F37332;">
-                  {{user.user_type}}
+                  {{userType}}
                 </p>
               </div>
                 <p v-if="user.subscription_type == 2">Premium</p> 
@@ -111,7 +111,7 @@
                   <p> {{ user.secteur }}</p>
                 </div>
                 <div v-else>
-                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs"></ejs-multiselect>
+                  <ejs-multiselect id='multiselect' :dataSource='fieldList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs"></ejs-multiselect>
                 </div>
               </div>
             </div>
@@ -147,12 +147,13 @@ export default {
   data() {
     return {
       store,
-      user: JSON.parse(localStorage.getItem("user")),
+      currentUser: JSON.parse(localStorage.getItem("user")),
+      user: {},
       tabNum: 1,
       edit: 0,
       choseType: 0,
-      userDescription: "",
-      userExp: "",
+      userDescription: this.user.description,
+      userExp: this.user.experience,
       userSkill: "",
       userField: "",
       userSoftskills: "",
@@ -163,11 +164,26 @@ export default {
         {id: 'skill3', name: 'Skill3'},
         {id: 'skill4', name: 'Skill4'},
       ],
+      fieldList: [
+        {id: 'fieldlist1', name: 'Domaine 1'},
+        {id: 'fieldlist2', name: 'Domaine 2'},
+        {id: 'fieldlist3', name: 'Domaine 3'},
+        {id: 'fieldlist4', name: 'Domaine 4'},
+      ],
       fields: {text: 'name', value:'id'},
       skills: [],
       softSkills: [],
       secteurs: []
     }
+  },
+  created() {
+    let self = this
+    this.store.dispatch("getUserFull", {
+      id: self.user.id
+    }).then( (response) => {
+        self.user = response.data
+        console.log(self.user)
+    })
   },
   methods: {
     getTab(value) {
@@ -185,7 +201,7 @@ export default {
     },
     editAccount() {
       const self = this
-      this.store.dispatch("registerEdit", {
+      this.store.dispatch("editDashboard", {
         id: this.user.id,
         skills: this.skills,
         softSkills: this.softSkills,
@@ -215,6 +231,8 @@ export default {
     },
     setUserType(type) {
       const self = this
+      console.log(this.user)
+      console.log(this.user.id)
       this.store.dispatch("setUserType", {
         id: this.user.id,
         type: type
@@ -227,7 +245,9 @@ export default {
     }
   },
   computed: {
-    
+    userType() {
+      return this.user.user_type == 1 ? "Chercheur" : "Porteur de projet" 
+    }
   },
 }
 </script>

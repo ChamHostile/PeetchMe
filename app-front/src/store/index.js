@@ -48,7 +48,7 @@ const store = new Vuex.Store({
         })
       }) 
     },
-    editAccount: ({state}) => {
+    editAccount: ({state, commit}) => {
       return new Promise((resolve, reject) => {
         instance.post('/registerEdit', state.userInfos)
         .then(function (response) {
@@ -62,7 +62,7 @@ const store = new Vuex.Store({
         })  
       })
     },
-    editDashboard: ({state}, editInfos) => {
+    editDashboard: ({state, commit}, editInfos) => {
       return new Promise((resolve, reject) => {
         instance.post('/registerEdit', editInfos)
         .then(function (response) {
@@ -102,7 +102,7 @@ const store = new Vuex.Store({
         })  
       })
     },
-    setUserType: ({state}, data) => {
+    setUserType: ({state, commit}, data) => {
       let url = '/user/setType'
       return new Promise((resolve, reject) => {
         instance.post(url, data)

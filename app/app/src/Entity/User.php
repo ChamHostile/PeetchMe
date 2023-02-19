@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\WorkField;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
@@ -11,21 +12,21 @@ use ApiPlatform\Metadata\Delete;
 use App\Controller\MeController;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\SecurityBundle\Security;
+use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Odm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use ApiPlatform\Doctrine\Odm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -70,8 +71,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     private ?string $email = null;
 
     #[ORM\ManyToMany(targetEntity: Skills::class)]
-    #[Groups(['read, write'])]
+    #[Groups(['read', 'write'])]
     private Collection $skills;
+
+    #[ORM\ManyToMany(targetEntity: WorkField::class)]
+    #[Groups(['read', 'write'])]
+    private Collection $workField;
 
     #[ORM\Column]
     #[Groups(['read, write'])]
@@ -354,6 +359,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         return $this;
     }
 
+            /**
+     * @return Collection<int, Skills>
+     */
+    public function getWorkField(): Collection
+    {
+        return $this->workField;
+    }
+
+    public function addWorkField(WorkField $workField): self
+    {
+        if (!$this->workField->contains($workField)) {
+            $this->workField->add($workField);
+        }
+
+        return $this;
+    }
+
+    public function removeWorkField(WorkField $workField): self
+    {
+        $this->workField->removeElement($workField);
+
+        return $this;
+    }
+
     public static function createFromPayload($id, array $payload)
     {
         return (new User())->setId($id);
@@ -405,4 +434,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
 
         return $this;
     }
+
 }

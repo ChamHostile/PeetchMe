@@ -67,7 +67,7 @@ class SecurityController extends AbstractController
   public function setUserType(Request $request, ManagerRegistry $doctrine) : JsonResponse
   {
     $jsonData = json_decode($request->getContent());
-    $currentUser = $this->userRepository->findOneBy(['id' => $jsonData->data->id]);
+    $currentUser = $this->userRepository->findOneBy(['id' => $jsonData->id]);
     $currentUser->setUserType($jsonData->type);
     $em = $doctrine->getManager();
     $em->persist($currentUser);
@@ -201,9 +201,9 @@ class SecurityController extends AbstractController
 
     return $this->json([
       'user'=> $currentUser,
-      'data' => $jsonData,
       'project' => $thisProject,
       'address' => $address,
+      'skill' => $currentUser->getSkills(),
       'email' => $currentUser->getEmail()
     ]);
   }
@@ -252,12 +252,8 @@ class SecurityController extends AbstractController
     $user = $this->userRepository->findOneBy(['id' => $jsonData->id]);
     $address = $this->addressRepository->findOneBy(['user_id' => $user->getId()]);
 
-    $userSkill = $user->getSkills();
-
-
     return $this->json([
       'user' => $user,
-      'skills' => $userSkill,
       'address' => $address,
       'email' => $user->getEmail()
     ]); 
