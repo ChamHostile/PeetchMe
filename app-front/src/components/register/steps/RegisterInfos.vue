@@ -90,7 +90,8 @@ export default {
       localization: "",
       experience: "",
       description: "",
-      store
+      store,
+      currentUser: JSON.parse(localStorage.getItem("user")),
     };
   },
   computed: {
@@ -108,7 +109,7 @@ export default {
   methods: { 
     editAccount() {
       this.store.commit('storeAccount', {
-        id: this.store.state.user.id,
+        id: this.currentUser.user.user.id,
         skills: this.skills,
         softSkills: this.softSkills,
         secteurs: this.secteurs,
@@ -116,6 +117,8 @@ export default {
         experience: this.experience,
         description: this.description
       })
+
+      console.log(this.store.state.userInfos.data.id)
 
       if (this.store.state.userInfos.data !== undefined && this.store.state.userInfos.data.id) {
         const self = this

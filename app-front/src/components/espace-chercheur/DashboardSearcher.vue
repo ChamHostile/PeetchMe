@@ -78,7 +78,9 @@
                   <p class="text-center">
                     Compétences
                   </p>
-                  <p> {{  user.skills }}</p>
+                  <section class="skills">
+                    <p class="badg" v-for="skill in currentUser.user.skill"> {{  skill.name }}</p>
+                  </section>                
                 </div>
                 <div v-else>
                   <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos compétences" mode="CheckBox" class="form-control text-center" v-model="skills"></ejs-multiselect>
@@ -87,8 +89,10 @@
                   <p class="text-center">
                     Soft Skills
                   </p>
-                  <p> {{  user.skills }}</p>
-                </div>
+                  <section class="skills">
+                    <p class="badg" v-for="skill in currentUser.user.skill"> {{  skill.name }}</p>
+                  </section>
+                  </div>
                 <div v-else>
                   <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos soft skills" mode="CheckBox" class="form-control text-center" v-model="softSkills"></ejs-multiselect>   
                 </div>
@@ -107,8 +111,10 @@
                 <div v-if="edit==0">
                   <p class="text-center">
                     Secteur d'activité
-                  </p>
-                  <p> {{ user.secteur }}</p>
+                  </p> 
+                  <section class="skills">
+                    <p class="badg" v-for="field in currentUser.user.field"> {{  field.name }}</p>
+                  </section>
                 </div>
                 <div v-else>
                   <ejs-multiselect id='multiselect' :dataSource='fieldList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs"></ejs-multiselect>
@@ -126,6 +132,32 @@
           </div>
         </div>
 
+        <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 3">
+          <div class="show active">
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
+              <p>Compléter votre profil à 100% pour pouvoir intéragir avec la communité  PeetchMe</p>
+            </div> 
+          </div>
+        </div>
+
+        <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 4">
+          <div class="show active">
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
+              <p>Compléter votre profil à 100% et choisissez votre statut afin d’accéder à nos offres</p>
+            </div> 
+          </div>
+        </div>
+
+        <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 5">
+          <div class="show active">
+            <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
+              <SearcherUpdateComponent></SearcherUpdateComponent>
+            </div> 
+          </div>
+        </div>
+
+
+
       </div>
     </div>
 </div>
@@ -139,11 +171,12 @@ import Footer from '../Footer.vue'
 import SideBarComponent from '../SideBarComponent.vue'
 import DahsboardMenu from '../DahsboardMenu.vue'
 import store from '../../store'
+import SearcherUpdateComponent from './SearcherUpdate'
 
 // console.log(JSON.parse(localStorage.getItem("user")).user.user)
 export default {
   name: 'DashboardSearcher',
-  components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu},
+  components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu, SearcherUpdateComponent},
   data() {
     return {
       store,
@@ -152,8 +185,8 @@ export default {
       tabNum: 1,
       edit: 0,
       choseType: 0,
-      userDescription: this.user.description,
-      userExp: this.user.experience,
+      userDescription: '',
+      userExp: '',
       userSkill: "",
       userField: "",
       userSoftskills: "",
@@ -176,12 +209,13 @@ export default {
       secteurs: []
     }
   },
-  created() {
+  beforeMount() {
     let self = this
+    console.log(this.currentUser)
     this.store.dispatch("getUserFull", {
-      id: self.user.id
+      id: this.currentUser.user.user.id
     }).then( (response) => {
-        self.user = response.data
+        self.user = response.data.user
         console.log(self.user)
     })
   },
@@ -260,6 +294,31 @@ export default {
 }
 .nav-link .active{
   background-color: #3F3FA6 !important;
+}
+
+.skills{
+  align-items: center;
+    align-self: stretch;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0px !important;
+    padding-top: 4px !important;
+    padding-bottom: 12px !important;
+    margin-top: 20px !important;
+    border: 0px ;
+}
+
+.badg{
+  align-items: center;
+  background-color: lightgrey;
+  color:black !important;
+  border-radius: 5px;
+  display: flex;
+  gap: 10px;
+  padding: 0px 10px;
+  width: fit-content;
 }
 
 .section-dashboard{

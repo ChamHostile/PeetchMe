@@ -46,11 +46,27 @@ computed: {
   filter: invert(96%) sepia(0%) saturate(1467%) hue-rotate(231deg) brightness(117%) contrast(77%);
 }
 .tab-active {
-  filter: invert(100%) sepia(0%) saturate(7480%) hue-rotate(198deg) brightness(108%) contrast(108%) !important;
-}
+    align-items: center;
+    background-color: var(--bleu);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    padding: 10px 15px;
+    position: relative;
+    width: fit-content;}
 
 .bg-active {
   background-color: #3F3FA6 !important;
+}
+.bg-active p{
+  color: white !important;
+  display: block !important
+  ;
+}
+.bg-active img{
+  filter: brightness(0) invert(1);
 }
 .svg{
   fill:  #3F3FA6;
