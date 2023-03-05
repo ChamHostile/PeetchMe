@@ -21,7 +21,6 @@
           <img src="../../../assets/img/register_img.png"/>
         </div>
       </div>
-      <b-button size="md" class="button-blue"><router-link to="/register/subscription" class="text-light">Valider</router-link></b-button>
     </div>
   </template>
 

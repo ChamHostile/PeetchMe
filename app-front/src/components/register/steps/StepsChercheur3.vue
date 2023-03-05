@@ -21,9 +21,8 @@
           <img src="../../../assets/img/register_img.png"/>
         </div>
       </div>
-      <b-button size="md" class="button-blue"><router-link to="/searcher/home" class="text-light">Valider</router-link></b-button>
     </div>
-  </template>
+</template>
 
 <script>
 /* eslint-disable */

@@ -1,8 +1,10 @@
 <template>
   <div class="container-fluid m-0 p-0 bg-light" style="overflow-x:hidden">
     <NavbarConnected></NavbarConnected>
+    <div class="row">
+    <SideBarComponent></SideBarComponent>
+    <div class="col-11" style="margin-top: 120px;">
     <section style="overflow-x:hidden !important;">
-      <p class="text-left my-5 offre">Vous êtes chercheur de projet</p>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow-x:hidden !important;">
         <div class="col-7 mr-5">
           <label for="searcher-search-input">Rechercher un domaine technique/métier afin d’afficher les projets adaptés à votre besoin</label>
@@ -23,100 +25,65 @@
     <section style="overflow-x:hidden !important; margin-bottom: 150px;" class="mt-5 mx-5">
       <h6 class="projects">Résultats en fonction de votre recherche</h6>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
+        <div class="col-4 mt-2 mb-4" v-for="project in projects">
+          <div class="card shadow p-0" @click="goToDetail(project.id) ">
             <img src="../../assets/img/project.png" class="card-img-top" alt="...">
+            <span class="rounded text-white font-weight-normal p-2" style="background-color: #F37332; position:absolute;">{{ project.name }}</span>
             <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
+              <p class="card-text">{{project.description}}</p>
             </div>
           </div>
         </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
+      </div>
+      <div class="row">
+          <div class="col-8 mt-5 d-flex justify-content-center">
+          <p>{{ currentPage }} </p> sur {{maxPage}}
           </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm p-0">
-            <img src="../../assets/img/project.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">Ce projet à pour but de planter des arbres via une application et ainsi contribuer à l’évolution de notre environnement...</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-8 mt-5 d-flex justify-content-end">
-         <p>1 </p> sur 5
-        </div>
+        
         <div class="col-4 mt-5 d-flex justify-content-end">
           <p>Page suivante > </p>
         </div>
       </div>
     </section>
+    </div>
+    </div>
     <Footer class="mt-5"></Footer>
   </div>
 </template>
 <script>
 import NavbarConnected from '../register/NavbarConnected'
 import Footer from '../Footer'
+import store from '../../store'
+import SideBarComponent from '../SideBarComponent.vue'
 
 export default {
   name: 'SearchResultSearcher',
-  components: {NavbarConnected, Footer},
+  components: {NavbarConnected, Footer, SideBarComponent},
   data () {
     return {
+      store,
+      projects: [],
+      maxResult: '',
+      maxPage: '',
+      currentPage: 1
     }
-  }
+  },
+  created() {
+    let self = this
+      this.store.dispatch("getProjects", {}).then( (response) => {
+          console.log(response.data.projects)
+          self.projects = response.data.projects
+          self.maxResult = response.data.maxResult
+          self.maxPage = response.data.maxPages
+          console.log(self.projects)
+        })
+    },
+    methods: {
+      goToDetail($id) {
+        var url = "/project/" + $id
+        this.$router.push(url);  
+      }
+    },
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
