@@ -6,7 +6,7 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://nginx-container:8080/api',
 })
 
 let user = localStorage.getItem('user')

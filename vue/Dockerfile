@@ -1,5 +1,5 @@
 # base image
-FROM node:8.10.0-alpine
+FROM node:8.10.0-alpine as build-stage
 
 # Create app directory
 WORKDIR /app
@@ -12,6 +12,10 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 8081 
+RUN npm run build
 
-CMD [ "npm", "run", "dev"]
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
