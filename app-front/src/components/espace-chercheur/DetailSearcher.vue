@@ -9,7 +9,7 @@
               <div class="row">
                 <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
                 <div class=" col-3">
-                  <p class="font-weight-bold">{{user.prenom}}</p>
+                  <p class="font-weight-bold">{{user.user.prenom}}</p>
                   <p style="color:orange !important;">Metier</p>
                   <p class="text-muted">Localisation Non renseignée</p>
                 </div>
@@ -27,13 +27,15 @@
                 <p class="text-center">
                   Description
                 </p>
-                <p> {{  user.description }}</p>
+                <p> {{  user.user.description }}</p>
               </div>
               <div>
                 <p class="text-center">
                   Compétences
                 </p>
-                <p> {{ stringifySkills() }}</p>
+                <section class="skills">
+                    <p class="badg" v-for="skill in currentUser.user.skill"> {{  skill.name }}</p>
+                  </section>              
               </div>
               <div>
                 <p class="text-center">
@@ -55,8 +57,10 @@
                 <p class="text-center">
                   Secteur d'activité
                 </p>
-                <p> {{  user.secteur }}</p>
-              </div>
+                <section class="skills">
+                    <p class="badg" v-for="field in currentUser.user.field"> {{  field.name }}</p>
+                  </section>              
+                </div>
             </div>
           </div>
         </div>
@@ -78,27 +82,18 @@ export default {
       userId: this.$route.params.id,
       user: {},
       skills:  [],
-      skillsId: []
+      skillsId: [],
+      currentUser: JSON.parse(localStorage.getItem("user")),
     }
   },
   created() {
     let self = this
-      this.store.dispatch("getUserFull", {
-        id: self.userId
-      }).then( (response) => {
-          self.user = response.data.user
-          var skills = response.data.skills
-          for (var skill in skills) {
-            let thisSkill = skills[skill].replace('/api', '')
-            self.skillsId.push(thisSkill)
-            self.store.dispatch("getSkill", {
-              url: thisSkill
-            }).then( (response) => {
-              self.skills.push(response.data)
-            })
-          }
-          self.user = response.data.user
-        }) 
+    this.store.dispatch("getUserDetail", {
+      id: this.userId
+    }).then( (response) => {
+        self.user = response.data
+        console.log(self.user)
+    })
   }, methods: {
     stringifySkills() {
       let stringSkills = ""
@@ -156,5 +151,30 @@ export default {
 .input{
   margin-top: 20px;
   background-color: white !important;
+}
+
+.skills{
+  align-items: center;
+    align-self: stretch;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0px !important;
+    padding-top: 4px !important;
+    padding-bottom: 12px !important;
+    margin-top: 20px !important;
+    border: 0px ;
+}
+
+.badg{
+  align-items: center;
+  background-color: lightgrey;
+  color:black !important;
+  border-radius: 5px;
+  display: flex;
+  gap: 10px;
+  padding: 0px 10px;
+  width: fit-content;
 }
 </style>

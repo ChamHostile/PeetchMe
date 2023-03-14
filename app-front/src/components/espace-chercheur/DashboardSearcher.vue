@@ -25,18 +25,18 @@
                   <img src="../../assets/img/blondefemale.png" class="sm-img" style="border-radius: 50%; ">
                   </div>
                   <div class=" col-3">
-                    <p class="font-weight-bold">{{user.prenom}}</p>
+                    <p class="font-weight-bold">{{user.user.prenom}}</p>
                     <p style="color:orange !important;">Metier</p>
                     <p class="text-muted">Localisation Non renseignée</p>
                   </div>
                 </div>
               </div>
               <div class="subscribe offset-4 col-3 d-flex align-items-center">
-              <div v-if="!user.user_type">
+              <div v-if="!user.user.user_type">
                 <p class="font-weight-bold" style="color: #F37332;">
                   Etes-vous porteur ou chercheur de projet ?
                 </p>
-                <button @click.prevent="selectType()" class="btn btn-primary">
+                <button @click.prevent="selectType()" class="btn text-white" style="background-color:#3F3FA6 !important; ">
                   Choisir votre profil
                 </button>
               </div>
@@ -69,7 +69,7 @@
                   <p class="text-center">
                     Description
                   </p>
-                  <p> {{  user.description }}</p>
+                  <p> {{  user.user.description }}</p>
                 </div>
                 <div v-else>
                   <input type="text" v-model="userDescription">
@@ -79,22 +79,22 @@
                     Compétences
                   </p>
                   <section class="skills">
-                    <p class="badg" v-for="skill in currentUser.user.skill"> {{  skill.name }}</p>
+                    <p class="badg" v-for="skill in generalSkills"> {{  skill.name }}</p>
                   </section>                
                 </div>
                 <div v-else>
-                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos compétences" mode="CheckBox" class="form-control text-center" v-model="skills"></ejs-multiselect>
+                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos compétences" mode="CheckBox" class="form-control text-center" v-model="skills" :key="componentKey"></ejs-multiselect>
                 </div>
                 <div v-if="edit==0">
                   <p class="text-center">
                     Soft Skills
                   </p>
                   <section class="skills">
-                    <p class="badg" v-for="skill in currentUser.user.skill"> {{  skill.name }}</p>
+                    <p class="badg" v-for="skill in mySoftSkills"> {{  skill.name }}</p>
                   </section>
                   </div>
                 <div v-else>
-                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos soft skills" mode="CheckBox" class="form-control text-center" v-model="softSkills"></ejs-multiselect>   
+                  <ejs-multiselect id='multiselect' :dataSource='skillsList' :fields='fields' placeholder="Ajoutez vos soft skills" mode="CheckBox" class="form-control text-center" v-model="softSkills" :key="componentKey"></ejs-multiselect>   
                 </div>
               </div>
 
@@ -103,10 +103,10 @@
                   <p class="text-center">
                     Experience
                   </p>
-                  <p> {{  user.experience }}</p>
+                  <p> {{  user.user.experience }}</p>
                 </div>  
                 <div v-else>
-                  <input type="text">
+                  <input type="text" v-model="userExp">
                 </div>
                 <div v-if="edit==0">
                   <p class="text-center">
@@ -117,7 +117,7 @@
                   </section>
                 </div>
                 <div v-else>
-                  <ejs-multiselect id='multiselect' :dataSource='fieldList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs"></ejs-multiselect>
+                  <ejs-multiselect id='multiselect' :dataSource='fieldList' :fields='fields' placeholder="Votre/Vos secteur(s) d'activité" mode="CheckBox" class="form-control text-center" v-model="secteurs" :key="componentKey"></ejs-multiselect>
                 </div>
               </div>
             </div>
@@ -127,7 +127,19 @@
         <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 2">
           <div class="show active">
             <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
-              <p>Aucun projets enregistrés</p>
+              <div v-if="user.bibliothequeProjects.length > 0">
+                <div class="col-4" v-for="project in user.bibliothequeProjects">
+                  <div class="card shadow p-0" @click="goToDetail(project.id) ">
+                    <img src="../../assets/img/project.png" class="card-img-top" alt="...">
+                    <span class="rounded text-white font-weight-normal p-2" style="background-color: #F37332; position:absolute;">{{ project.name }}</span>
+
+                    <div class="card-body">
+                      <p class="card-text">{{project.description}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
             </div> 
           </div>
         </div>
@@ -135,7 +147,8 @@
         <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 3">
           <div class="show active">
             <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
-              <p>Compléter votre profil à 100% pour pouvoir intéragir avec la communité  PeetchMe</p>
+              <MessagerieComponentVue></MessagerieComponentVue>
+              <!-- <p>Compléter votre profil à 100% pour pouvoir intéragir avec la communité  PeetchMe</p> -->
             </div> 
           </div>
         </div>
@@ -151,13 +164,10 @@
         <div class="col tab-content savedProjects" id="v-pills-tabContent" v-if="tabNum == 5">
           <div class="show active">
             <div class="row mx-auto mb-2 shadow-sm bg-white p-4 text-center" style="border-radius: 20px !important;">
-              <SearcherUpdateComponent></SearcherUpdateComponent>
+              <SearcherUpdateComponent :user="currentUser"></SearcherUpdateComponent>
             </div> 
           </div>
         </div>
-
-
-
       </div>
     </div>
 </div>
@@ -172,11 +182,13 @@ import SideBarComponent from '../SideBarComponent.vue'
 import DahsboardMenu from '../DahsboardMenu.vue'
 import store from '../../store'
 import SearcherUpdateComponent from './SearcherUpdate'
+import TypeComponent from './associe/chercheurouporteur'
+import MessagerieComponentVue from '../messagerie/MessagerieComponent.vue'
 
 // console.log(JSON.parse(localStorage.getItem("user")).user.user)
 export default {
   name: 'DashboardSearcher',
-  components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu, SearcherUpdateComponent},
+  components: {NavbarConnected, Footer, SideBarComponent, DahsboardMenu, SearcherUpdateComponent, TypeComponent, MessagerieComponentVue},
   data() {
     return {
       store,
@@ -190,6 +202,7 @@ export default {
       userSkill: "",
       userField: "",
       userSoftskills: "",
+      componentKey: 0,
       tabClass: "tabActive",
       skillsList: [
         {id: 'skill1', name: 'Skill1'},
@@ -212,12 +225,23 @@ export default {
   beforeMount() {
     let self = this
     console.log(this.currentUser)
+    console.log(this.store.state.user.id)
+    let id = this.store.state.user.id
+    if (!id) id = this.currentUser.user.user.id
+    console.log(id)
     this.store.dispatch("getUserFull", {
-      id: this.currentUser.user.user.id
+      id: id
     }).then( (response) => {
-        self.user = response.data.user
+        self.user = response.data
         console.log(self.user)
     })
+    console.log(this.user.skill)
+    console.log(self.user)
+    this.userExp = this.user.experience
+    this.userDescription = this.user.description
+    this.skills = this.currentUser.user.skill.filter(i => i.type === 'skills')
+    this.softSkills = this.currentUser.user.skill.filter(i => i.type === 'softSkill')
+
   },
   methods: {
     getTab(value) {
@@ -225,7 +249,10 @@ export default {
       return this.tabNum = value
     },
     changeTab(tabNum) {
-      return this.tabNum = tabNum;
+      return this.tabNum = tabNum
+    },
+    forceRerender() {
+      this.componentKey += 1
     },
     modeEdit() {
       console.log(this.edit)
@@ -236,11 +263,14 @@ export default {
     editAccount() {
       const self = this
       this.store.dispatch("editDashboard", {
-        id: this.user.id,
-        skills: this.skills,
-        softSkills: this.softSkills,
-        secteurs: this.secteurs,
-        description: this.description
+        data: {
+          id: this.user.id,
+          skills: this.skills,
+          softSkills: this.softSkills,
+          secteurs: this.secteurs,
+          description: this.userDescription,
+          experience: this.userExp
+        }
       }).then(function (response) {
         console.log(response)
         if (response.status === 200 ) {
@@ -251,7 +281,8 @@ export default {
     cancelEdit() {
       console.log(this.edit)
       if (this.edit !== 0) {
-        return this.edit = 0
+        this.edit = 0
+        this.$forceUpdate();
       }
     },
     selectType() {
@@ -260,28 +291,46 @@ export default {
         return this.choseType = 1
       }
     },
+    goToDetail($id) {
+        var url = "/project/" + $id
+        this.$router.push(url);  
+      },
+      goTo(name) {
+        this.$router.push({name: name});
+      },
     editData() {
 
     },
     setUserType(type) {
       const self = this
-      console.log(this.user)
       console.log(this.user.id)
       this.store.dispatch("setUserType", {
         id: this.user.id,
         type: type
       }).then(function (response) {
-        console.log(response)
-        if (response.status === 200 ) {
-          self.$router.go()
-        }  
-      });
-    }
+          console.log(response)
+          if (response.status === 200 ) {
+            self.store.dispatch("getUserFull", {
+              id: self.user.id
+            })
+            self.$router.go()
+          }  
+        }); 
+      }
   },
   computed: {
     userType() {
-      return this.user.user_type == 1 ? "Chercheur" : "Porteur de projet" 
+      return this.user.user.user_type == 1 ? "Chercheur" : "Porteur de projet" 
+    },
+    mySoftSkills() {
+      // console.log(this.currentUser.user.skill.filter(i => i.type === 'softSkill'))
+      return this.currentUser.user.skill.filter(i => i.type === 'softSkill')
+    },
+    generalSkills() {
+      // this.currentUser.user.skill.filter(i => i.type === 'skills')
+      return this.currentUser.user.skill.filter(i => i.type === 'skills')
     }
+
   },
 }
 </script>

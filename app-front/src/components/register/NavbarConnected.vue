@@ -2,7 +2,7 @@
     <div>
         <b-row class="shadow-sm" style="overflow-x:hidden !important;">
             <b-navbar style="background: #333333 !important;" class="col-12">
-                <b-navbar-brand href="#" class="mx-5 col-sm-2 text-center m-0"><img src="../../assets/img/peetchme_white.svg" class="sm-img"></b-navbar-brand>
+                <b-navbar-brand href="#" class="mx-5 col-sm-2 text-center m-0"><img src="../../assets/img/peetchme_white.svg" class="sm-img" @click="goTo('HomeSearcher')"></b-navbar-brand>
                 <div class="col-3">
                     <b-row>
                         <!-- <b-navbar-item class="text-dark mx-auto
@@ -27,7 +27,12 @@ export default {
     return {
         
     }
-  }
+  },
+  methods: {
+    goTo(name) {
+        this.$router.push({name: name});
+      },
+  },
 }
 </script>
 <style>

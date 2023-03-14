@@ -35,12 +35,12 @@
         </div>
         <div class="frame-2">
           <div class="frame-265">
-            <default-form text1="Votre nom et prénom" text2="Nom" />
-            <default-form2 children="Prénom" />
+            <default-form text1="Votre nom et prénom" :text2="user.user.user.nom" />
+            <default-form2 :children="user.user.user.prenom" />
           </div>
           <default-form
             text1="Adresse email"
-            text2="JeanCastaldi@gmail.com"
+            :text2="user.user.email"
             className="default-form-1"
           />
           <default-form
@@ -48,14 +48,14 @@
             text2="••••••••••"
             className="default-form-1"
           />
-          <default-form text1="Âge" text2="129 ans" className="default-form-2" />
+          <default-form text1="Âge" :text2="user.user.user.age" className="default-form-2" />
           <div class="frame-266">
-            <default-form text1="Code postal" text2="75016, PARIS" />
-            <default-form text1="Pays" text2="France" />
+            <default-form text1="Code postal" :text2="user.user.address.zip" />
+            <default-form text1="Pays" :text2="user.user.address.country" />
           </div>
           <default-form
             text1="Numéro de téléphone"
-            text2="+33 06 34 26 83 21"
+            :text2="user.user.user.telephone"
             className="default-form-1"
           />
         </div>
@@ -115,14 +115,14 @@
 
         </div>
         <div class="frame-2">
-          <default-form text1="Âge" text2="129 ans" className="default-form-2" />
+          <default-form text1="Âge" :text2="user.user.user.age" className="default-form-2" />
           <div class="frame-266">
-            <default-form text1="Code postal" text2="75016, PARIS" />
-            <default-form text1="Pays" text2="France" />
+            <default-form text1="Code postal" :text2="user.user.address.zip" />
+            <default-form text1="Pays" :text2="user.user.address.country" />
           </div>
           <default-form
             text1="Numéro de téléphone"
-            text2="+33 06 34 26 83 21"
+            :text2="user.user.user.telephone"
             className="default-form-1"
           />
         </div>
@@ -138,6 +138,7 @@ import DefaultForm2 from './DefaultForm2.vue';
 import ToggleButton from '../ToggleButton';
   export default {
     name: "SearcherUpdateComponent",
+    props: ['user'],
     components: {
       Modification,
       DefaultForm,

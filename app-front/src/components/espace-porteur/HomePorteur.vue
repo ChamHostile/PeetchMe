@@ -87,23 +87,11 @@
       <div class="row" style="overflow:hidden !important;">
         <div class="col-4" v-for="chercheur in chercheurs">
           <a @click="goToDetail(chercheur.id)" style="text-decoration: none; color:inherit;">
-          <div class="card shadow-sm p-0" v-if="chercheur.nom && chercheur.prenom">
-            <div class="section mt-3 px-5">
-              <div class="row mx-auto">
-                <img v-if="chercheur.photo" src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%; z-index:200 !important; position:absolute !important;">
-                <img v-else="chercheur.photo" src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%; z-index:200 !important; position:absolute !important;">
-                <div class="text col-7" style="font-weight: normal !important; background: #E2E2E2; border-radius: 0px 30px 30px 0px; position:relative; left:0px;">
-                <p class="text-dark">{{ chercheur.prenom }}</p>
-                <p> Metier </p>
-                </div>
-              </div>
-            </div>
-            
-            <p class="text-center">Détail <img src="../../assets/img/dropdown.svg" class="" style="width: 30px;"></p>
-            <div class="card-body">
-              <p class="card-text">{{ chercheur.description }}</p>
-            </div>
-          </div>
+            <AssocieComponentVue v-if="chercheur.nom && chercheur.prenom"
+            :prenom="chercheur.prenom"
+            :metier="chercheur.metier"
+            :description="chercheur.description"
+          ></AssocieComponentVue>
         </a>
         </div>
       </div>
@@ -157,10 +145,11 @@ import NavbarConnected from '../register/NavbarConnected'
 import SideBarComponent from '../SideBarComponent.vue'
 import Footer from '../Footer'
 import store from '../../store'
+import AssocieComponentVue from '../espace-chercheur/associe/AssocieComponent.vue'
 
 export default {
   name: 'HomePorteur',
-  components: { NavbarConnected, Footer, SideBarComponent },
+  components: { NavbarConnected, Footer, SideBarComponent, AssocieComponentVue },
   data () {
     return {
       store,
@@ -174,7 +163,8 @@ export default {
           console.log(response.data.chercheurs)
           
           self.chercheurs = response.data.chercheurs
-          self.chercheurs = self.chercheurs.slice(0, 3)
+          let newChercheurs = self.chercheurs.filter(f.prenom !== null);
+          newChercheurs = self.chercheurs.slice(0, 3)
           self.store.dispatch("myProject", {}).then( (r) => {
             console.log(r.data)
           });

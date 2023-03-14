@@ -9,9 +9,9 @@
         <div class="col-7 mr-5">
           <label for="searcher-search-input">Rechercher un domaine technique/métier afin d’afficher les projets adaptés à votre besoin</label>
           <div class="input-group col-md-9 mx-auto">
-            <input class="form-control py-2" type="search" placeholder="Rechercher">
+            <input class="form-control py-2" type="search" placeholder="Rechercher" v-model="search">
             <span class="input-group-append">
-              <button class="btn btn-secondary" type="button">
+              <button class="btn btn-secondary" type="button" @click.prevent="searchFilter()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
                 </svg>
@@ -65,12 +65,20 @@ export default {
       projects: [],
       maxResult: '',
       maxPage: '',
-      currentPage: 1
+      currentPage: 1,
+      search: ""
     }
   },
   created() {
     let self = this
-      this.store.dispatch("getProjects", {}).then( (response) => {
+    let searchDetail = null;
+    if (this.$route.query) {
+      searchDetail = this.$route.query.projects
+    }
+    console.log(searchDetail)
+      this.store.dispatch("getProjects", {
+        search: searchDetail
+      }).then( (response) => {
           console.log(response.data.projects)
           self.projects = response.data.projects
           self.maxResult = response.data.maxResult
@@ -82,7 +90,21 @@ export default {
       goToDetail($id) {
         var url = "/project/" + $id
         this.$router.push(url);  
+      },
+      searchFilter() {
+        self = this
+        this.projects = []
+        this.store.dispatch("getProjects", {
+          search: this.search
+        }).then( (response) => {
+          console.log(response.data.projects)
+          self.projects = response.data.projects
+          self.maxResult = response.data.maxResult
+          self.maxPage = response.data.maxPages
+          console.log(self.projects)
+        })
       }
+
     },
 }
 </script>

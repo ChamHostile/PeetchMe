@@ -45,23 +45,12 @@
       <h6 class="projects">Résultats en fonction de votre recherche</h6>
       <div class="row text-center d-flex aligns-items-center justify-content-center" style="overflow:hidden !important;">
         <div class="col-4" v-for="chercheur in chercheurs">
-        <a @click="goToDetail(chercheur.id)" style="text-decoration: none; color:inherit;">
-          <div class="card shadow-sm p-0" v-if="chercheur.nom && chercheur.prenom">
-            <div class="section mt-3">
-              <div class="row mx-auto">
-                <img src="https://via.placeholder.com/104" class="col-4" style="border-radius: 50%;">
-                <div class="text col-7" style="font-weight: normal !important; background: #E2E2E2; border-radius: 0px 30px 30px 0px;">
-                <p class="text-dark">{{ chercheur.prenom }}</p>
-                <p> Metier </p>
-                </div>
-              </div>
-            </div>
-            
-            <p class="text-center">Détail <img src="../../assets/img/dropdown.svg" class="" style="width: 30px;"></p>
-            <div class="card-body">
-              <p class="card-text">{{ chercheur.description }}</p>
-            </div>
-          </div>
+          <a @click="goToDetail(chercheur.id)" style="text-decoration: none; color:inherit;">
+            <AssocieComponentVue v-if="chercheur.nom && chercheur.prenom"
+            :prenom="chercheur.prenom"
+            :metier="chercheur.metier"
+            :description="chercheur.description"
+          ></AssocieComponentVue>
         </a>
         </div>
         <div class="col-8 mt-5 d-flex justify-content-end">
@@ -80,12 +69,13 @@
 <script>
 import NavbarConnected from '../register/NavbarConnected'
 import SideBarComponent from '../SideBarComponent.vue'
+import AssocieComponentVue from '../espace-chercheur/associe/AssocieComponent.vue'
 import Footer from '../Footer'
 import store from '../../store'
 
 export default {
   name: 'SearchResultPorteur',
-  components: {NavbarConnected, Footer, SideBarComponent},
+  components: {NavbarConnected, Footer, SideBarComponent, AssocieComponentVue},
   data () {
     return {
       store,

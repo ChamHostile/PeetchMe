@@ -90,8 +90,47 @@ const store = new Vuex.Store({
         })  
       })
     },
-    getUserFull: ({state}, userId) => {
+    getUserFull: ({state, commit}, userId) => {
       let url = '/getUserFull'
+      return new Promise((resolve, reject) => {
+        instance.post(url, userId)
+        .then(function (response) {
+          commit("setUser", {
+            user: response.data
+          })
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getUserDetail: ({state, commit}, userId) => {
+      let url = '/getUserFull'
+      return new Promise((resolve, reject) => {
+        instance.post(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    newMessage: ({state, commit}, userId) => {
+      let url = '/getUserFull'
+      return new Promise((resolve, reject) => {
+        instance.post(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    addToBibliotheque: ({state, commit}, userId) => {
+      let url = '/addToBibliotheque'
       return new Promise((resolve, reject) => {
         instance.post(url, userId)
         .then(function (response) {
@@ -107,9 +146,6 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         instance.post(url, data)
         .then(function (response) {
-          commit("setUser", {
-            user: response.data
-          })
           resolve(response)
         })
         .catch(function (error) {
@@ -117,10 +153,10 @@ const store = new Vuex.Store({
         })  
       })
     },
-    getProjects: async ({state}, userId) => {
+    getProjects: async ({state}, search) => {
       let url = '/match/porteurs'
       return new Promise((resolve, reject) => {
-        instance.get(url, {userId})
+        instance.post(url, {search})
         .then(function (response) {
           resolve(response)
         })
@@ -143,18 +179,19 @@ const store = new Vuex.Store({
     },
     myProject: ({commit, state}) => {
       let url = '/getProject';
-      const user = JSON.parse(localStorage.getItem("user"));
+      let user = JSON.parse(localStorage.getItem("user"));
       // const userId = user.id;
       // let idPayload = {
       //   id: userId
       // }
-      let idPayload = {id: user.id}
+      let idPayload = {id: user.user.user.id}
       console.log(user);
+      console.log(idPayload)
       return new Promise((resolve, reject) => {
         instance.post(url, idPayload)
         .then(function (response) {
           resolve(response)
-          if (response.data.project !== undefined && response.data.project !== null_) {
+          if (response.data.project !== undefined && response.data.project !== null) {
             commit('setProject', response.data)
           }
         })
@@ -175,10 +212,10 @@ const store = new Vuex.Store({
         })  
       })
     },
-    getChercheurs: async ({state}, userId) => {
+    getChercheurs: async ({state}, search) => {
       let url = '/match/chercheur'
       return new Promise((resolve, reject) => {
-        instance.get(url, userId)
+        instance.post(url, search)
         .then(function (response) {
           resolve(response)
         })
