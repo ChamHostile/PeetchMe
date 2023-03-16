@@ -14,11 +14,12 @@
           <div class="col-8">
             <div class="row">
               <h2 class="col-3" style="color: #F37332;">{{ project.name }}</h2>
-              <div class="offset-6 col-3 d-flex justify-content-end" v-if="currentUser.user.id != user.id">
+              <div class="offset-6 col-3 d-flex justify-content-end" v-if="currentUser.user.user.id != user.id && currentUser.user.user.user_type == 1">
                   <a href="" @click.prevent="cancelEdit()" class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/ajout_profil.svg"/></a>
                   <a v-if="bibliActive==0" href="" @click.prevent="addToBibli()" class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/envoi_msg.svg"/></a>
                   <a v-else href="" class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/bibli_envoye.svg"/></a>
-                  <a href="" @click.prevent="addToBibli()" class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/ajout_bibli.svg" ></a>
+                  <a href="" v-if="messageAdded==0" @click.prevent="newMessage()" class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/ajout_bibli.svg" ></a>
+                  <a href="" v-else class="text-white mx-2 mb-2" style="text-decoration: none;"><img src="../../assets/img/msg_envoye.svg" ></a>
                   
                   
               </div>
@@ -52,7 +53,7 @@
           </div>
         </div>
         <div class="row">
-              <div class="col-12 d-flex justify-content-start" v-if="currentUser.user.id != user.id">
+              <div class="col-12 d-flex justify-content-start" v-if="currentUser.user.user.id != user.id">
                 <section class="skills">
                     <p color="#333333">Secteur d'activité</p>
                     <p class="badg" style="background-color: #333333 !important; color: white !important;"> {{ project.field }}</p>
@@ -130,10 +131,12 @@ export default {
       store,
       projectId: this.$route.params.id,
       project: {},
+      projectFull: {},
       user: {},
       skills:  [],
       skillsId: [],
       bibliActive: 0,
+      messageAdded: 0,
       currentUser: JSON.parse(localStorage.getItem("user")),
     }
   },
@@ -143,9 +146,11 @@ export default {
         projectId: self.projectId
       }).then( (response) => {
           self.project = response.data.project
+          self.projectFull = response.data
            self.skills = response.data.skills
           self.user = response.data.user
         }) 
+        console.log(this.currentUser.user)
   }, 
   methods: {
     addToBibli() {
@@ -157,6 +162,19 @@ export default {
         if (response.status === 200 ) {
           if (response.data.added)
             self.bibliActive = 1
+          }
+        }) 
+    },
+    newMessage() {
+      let self = this
+      this.store.dispatch("newMessage", {
+        sender: self.currentUser.user.user.id,
+        receiver: self.projectFull.user.id,
+        message: "Bonjour, je suis intéressé par ce projet !"
+      }).then( (response) => {
+        if (response.status === 200 ) {
+          if (response.data.added)
+            self.messageAdded = 1
           }
         }) 
     }

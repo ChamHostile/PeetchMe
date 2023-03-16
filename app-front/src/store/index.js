@@ -79,6 +79,7 @@ const store = new Vuex.Store({
       })
     },
     getUser: ({state}, userId) => {
+      console.log(userId)
       let url = '/users/' + userId.id
       return new Promise((resolve, reject) => {
         instance.get(url, userId)
@@ -118,9 +119,34 @@ const store = new Vuex.Store({
       })
     },
     newMessage: ({state, commit}, userId) => {
-      let url = '/getUserFull'
+      let url = '/newMessage'
       return new Promise((resolve, reject) => {
         instance.post(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getChatrooms: ({state, commit}, userId) => {
+      let url = '/chatrooms'
+      return new Promise((resolve, reject) => {
+        instance.post(url, userId)
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          reject(error)
+        })  
+      })
+    },
+    getMessages: ({state, commit}, chatroomId) => {
+      console.log(chatroomId)
+      let url = '/chatroom/' + chatroomId.chatroomId
+      return new Promise((resolve, reject) => {
+        instance.get(url)
         .then(function (response) {
           resolve(response)
         })

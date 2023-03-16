@@ -10,7 +10,6 @@ import { MultiSelectPlugin } from "@syncfusion/ej2-vue-dropdowns";
 import { registerLicense } from '@syncfusion/ej2-base';
 import { MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-dropdowns';
 
-
 import './app.css'
 
 import 'bootstrap/dist/css/bootstrap.css'

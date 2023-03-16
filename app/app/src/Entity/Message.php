@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\MessageRepository;
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\MessageRepository;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource]
@@ -19,15 +21,15 @@ class Message
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $message = null;
 
-    #[ORM\OneToOne(inversedBy: 'message', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\Column]
+    private ?int $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?Chatroom $chatroom = null;
 
     public function getId(): ?int
@@ -47,12 +49,12 @@ class Message
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?int
     {
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(int $user): self
     {
         $this->user = $user;
 

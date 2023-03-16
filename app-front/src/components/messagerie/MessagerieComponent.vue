@@ -2,19 +2,19 @@
   <div class="container">
   <div class="row">
     <div class="col-4 messagerie">
-     <a href="" class="row mt-3">
+     <a href="" v-for="chatroom in chatrooms" class="row mt-3" @click.prevent="getMessages(chatroom)">
       <img src="https://via.placeholder.com/104" style="width:100%; height:100%; border-radius:12px !important;" class="col-4"/>
       <div class="col-7 text-left">
-      <p>Mikaelle</p>
-      <p style="color:rgb(243, 115, 50);">Chef de projet</p>
+      <p>{{getChatRoomUser(chatroom, 'prenom')}}</p>
+      <p style="color:rgb(243, 115, 50);">{{getChatRoomUser(chatroom, 'metier')}}</p>
       </div>
       <hr>
      </a> 
     </div>
 
     <div class="col-7 messagerie ml-5" style="position:relative;">
-    <div class="" style="min-height: 300px;">
-      
+    <div class="message-container" style="min-height: 400px;">
+      <span style="background-color:tomato; color:white;" v-for="message in messages" :class="positionMessage(message)">{{ message.message }}</span>
     </div>
     <div class="row">
     <input type="text" class="form-control mx-2 mb-2 col-9" style="position:absolute; bottom:0">  
@@ -31,7 +31,6 @@ import store from '../../store'
 export default {
   name: 'DetailProjectComponent',
   components: {},
-  props: ['chatrooms'], 
   data() {
     return {
       store,
@@ -39,26 +38,51 @@ export default {
       user: {},
       skills:  [],
       skillsId: [],
-      bibliActive: 0,
+      chatrooms: {},
+      messages: {},
       currentUser: JSON.parse(localStorage.getItem("user")),
     }
   },
   created() {
-    // let self = this
-    //   this.store.dispatch("getFullProject", {
-    //     projectId: self.projectId
-    //   }).then( (response) => {
-    //       self.project = response.data.project
-    //        self.skills = response.data.skills
-    //       self.user = response.data.user
-    //     }) 
+    let self = this
+      this.store.dispatch("getChatrooms", {
+        userId: this.currentUser.user.user.id
+      }).then( (response) => {
+          self.chatrooms = response.data.chatrooms
+        }) 
+        console.log(self.chatrooms)
   }, 
   methods: {
+    async getChatRoomUser(chatroom, attr) {
+      console.log(chatroom)
+      console.log(chatroom.user1)
+      console.log(this.currentUser.user.user.id)
+      let id = chatroom.user2
+      if (chatroom.user1 == this.currentUser.user.user.id) {
+        let id = chatroom.user2
+      } else {let id = chatroom.user1 }
+        const response = await this.store.dispatch("getUser", {
+        id: id
+      })
+        console.log(response['data'][attr])
+        return response['data'][attr]
+      },
+    getMessages(chatroom) {
+      let myChatroom = chatroom.id
+      console.log(myChatroom)
+    let self = this
+      this.store.dispatch("getMessages", {
+        chatroomId: myChatroom
+      }).then( (response) => {
+          self.messages = response.data.messages
+        }) 
+    },
+    positionMessage(message) {
+      return this.currentUser.user.user.id == message.user ? 'sender' : 'receiver'
+    }
   },
-  
-  
-  
-}
+    
+  }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
@@ -93,7 +117,25 @@ export default {
   border-radius: 15px;
   text-align: center; 
 }
-
+.sender{
+  background-color: #F37332;
+  color: white;
+  padding: 8px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  max-width: 75%;
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.receiver{
+  background-color: #3F3FA6;
+  padding: 8px;
+  border-radius: 12px;
+  color: white;
+  margin-bottom: 10px;
+  max-width: 75%;
+  align-items: flex-end;
+}
 .col-6 div {
   padding-top: 4px;
   padding-bottom: 12px;
@@ -103,8 +145,6 @@ export default {
   margin-top: 20px;
   box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
 }
-
-
 
 .col-6 div input {
   border: 0px;
@@ -154,4 +194,15 @@ a:active{
   padding: 0px 10px;
   width: fit-content;
 }
+
+.message-container{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 400px;
+  overflow-y: scroll;
+  align-items: flex-start;
+  padding: 20px;
+}
+
 </style>

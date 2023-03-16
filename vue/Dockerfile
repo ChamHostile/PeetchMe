@@ -1,17 +1,18 @@
 # base image
-FROM node:8.10.0-alpine
+FROM node:lts
 
 # Create app directory
 WORKDIR /app
 
 # Install app dependencies
-COPY package*.json ./
+COPY package*.json yarn.lock ./
 
-RUN npm install
+RUN yarn install
 
 # Bundle app source
 COPY . .
 
 EXPOSE 8081 
 
-CMD [ "npm", "run", "dev"]
+CMD [ "yarn", "start"]
+

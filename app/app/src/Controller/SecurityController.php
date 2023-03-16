@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Address;
+use App\Entity\Bibilotheque;
 use App\Entity\Project;
 use App\Entity\Skills;
 use App\Repository\UserRepository;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
+use App\Repository\BibilothequeRepository;
 
 #[Route('/api')]
 class SecurityController extends AbstractController
@@ -28,7 +30,8 @@ class SecurityController extends AbstractController
     private Security $security,
     private AddressRepository $addressRepository,
     private SkillsRepository $skillsRepository,
-    private ProjectRepository $projectRepository
+    private ProjectRepository $projectRepository,
+    private BibilothequeRepository $bibilothequeRepository
   )
   {
 
@@ -71,6 +74,7 @@ class SecurityController extends AbstractController
     $currentUser->setUserType($jsonData->type);
     $em = $doctrine->getManager();
     $em->persist($currentUser);
+    $em->flush();
     return $this->json([
       'user'=> $currentUser
     ]);
@@ -197,6 +201,7 @@ class SecurityController extends AbstractController
     if (!isset($jsonData)) $jsonData = "no data";
     $thisProject = "";
     if (isset($jsonData->project)) $thisProject = $jsonData->project->project;
+    if (!isset($address)) $address = [];
     // if (!isset($jsonData->project)) $jsonData = $jsonData.", no project";
 
     return $this->json([
@@ -237,9 +242,9 @@ class SecurityController extends AbstractController
     // dd($jsonData);
     $project = $this->projectRepository->findOneBy(['id' => $jsonData->projectId]);
     $user = $this->userRepository->findOneBy(['id' => $project->getUserId()]);
-
     return $this->json([
       'project' => $project,
+      'skills' => $project->getSkills(),
       'user' => $user
     ]);
   }
@@ -248,25 +253,106 @@ class SecurityController extends AbstractController
   public function getUserFull(Request $request, ManagerRegistry $doctrine) : JsonResponse
   {
     $jsonData = json_decode($request->getContent());
+    $em = $doctrine->getManager();
+
     // dd($jsonData);
     $user = $this->userRepository->findOneBy(['id' => $jsonData->id]);
     $address = $this->addressRepository->findOneBy(['user_id' => $user->getId()]);
 
+    $bibliotheque = $user->getBibilotheque();
+    if (!$bibliotheque) {
+      $bibliotheque = new Bibilotheque();
+      $bibliotheque->setUserId($user);
+      $em->persist($bibliotheque);
+      $em->flush();
+    }
+
+    $biblioProjects = $bibliotheque->getProjectId();
+
     return $this->json([
       'user' => $user,
       'address' => $address,
-      'email' => $user->getEmail()
+      'skill' => $user->getSkills(),
+      'email' => $user->getEmail(),
+      'bibliothequeProjects' => $biblioProjects
     ]); 
   }
 
-  #[Route('/match/porteurs', name: 'getProjects', methods: ['GET'])]
+  #[Route('/addToBibliotheque', name: 'addToBibli', methods: ['POST'])]
+  public function addToBibliotheque(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $em = $doctrine->getManager();
+    $jsonData = json_decode($request->getContent());
+    // dd($jsonData);
+    $user = $this->userRepository->findOneBy(['id' => $jsonData->userId]);
+    $project = $this->projectRepository->findOneBy(['id' => $jsonData->projectId]);
+
+    $bibliotheque = $user->getBibilotheque();
+    if (!$bibliotheque) {
+      $bibliotheque = new Bibilotheque();
+      $bibliotheque->setUserId($user);
+    }
+    $projectsBibli = $bibliotheque->getProjectId();
+    foreach($projectsBibli as $userProjects) {
+      if ($project == $userProjects) $added = true;
+      return $this->json([
+        'added' => true
+      ]);
+    }
+
+    $bibliotheque->addProjectId($project);
+
+    $em->persist($bibliotheque);
+    $em->flush();
+
+    $user->setBibilotheque($bibliotheque);
+    $em->persist($user);
+    $em->flush();
+
+    $added = true;
+
+    return $this->json([
+      'added' => $added
+    ]); 
+  }
+
+  #[Route('/getBibliotheque', name: 'getBibliotheque', methods: ['POST'])]
+  public function getBibliotheque(Request $request, ManagerRegistry $doctrine) : JsonResponse
+  {
+    $em = $doctrine->getManager();
+    $jsonData = json_decode($request->getContent());
+    // dd($jsonData);
+    $user = $this->userRepository->findOneBy(['id' => $jsonData->userId]);
+    $project = $this->projectRepository->findOneBy(['id' => $jsonData->projectId]);
+
+    $bibliotheque = $user->getBibilotheque();
+    if (!$bibliotheque) {
+      $bibliotheque = new Bibilotheque();
+    }
+    $bibliotheque->setUserId($user);
+    $bibliotheque->addProjectId($project);
+
+    $em->persist($bibliotheque);
+    $em->flush();
+
+    return $this->json([
+      'user' => $user,
+    ]); 
+  }
+
+
+  #[Route('/match/porteurs', name: 'getProjects', methods: ['POST'])]
   public function getPorteurMatchs(Request $request, ManagerRegistry $doctrine, $page=1) : JsonResponse
   {
     $jsonData = json_decode($request->getContent());
     if  (isset($jsonData->page)) $page = $jsonData->page;
-    $project = $this->projectRepository->createQueryBuilder('u')
-                    ->orderBy('u.id', 'DESC')
-                    ->getQuery();
+    $qb = $this->projectRepository->createQueryBuilder('u');
+    if ($jsonData->search && isset($jsonData->search->search) != null) {
+      $qb = $qb->where($qb->expr()->like('u.name', ':project'))
+      ->setParameter('project', '%'.$jsonData->search->search.'%');
+    }
+    $qb->orderBy('u.id', 'DESC');
+    $project = $qb->getQuery();
     $pageSize = '20';
     $paginator = new Paginator($project);
 
@@ -286,14 +372,20 @@ class SecurityController extends AbstractController
     ]);
   }
 
-  #[Route('/match/chercheur', name: 'getChercheurs', methods: ['GET'])]
+  #[Route('/match/chercheur', name: 'getChercheurs', methods: ['POST'])]
   public function getCherheurMatchs(Request $request, ManagerRegistry $doctrine, $page=1) : JsonResponse
   {
     $jsonData = json_decode($request->getContent());
     if (isset($jsonData->page)) $page = $jsonData->page;
-    $user = $this->userRepository->createQueryBuilder('u')
-                    ->orderBy('u.id', 'DESC')
-                    ->getQuery();
+   $qb = $this->userRepository->createQueryBuilder('u');
+   if (isset($jsonData->search)) {
+    $qb = $qb->where($qb->expr()->like('u.nom', ':nom'))
+          ->orWhere($qb->expr()->like('u.prenom', ':prenom'))
+    ->setParameter('nom', '%'.$jsonData->search.'%')
+    ->setParameter('prenom', '%'.$jsonData->search.'%');
+    }
+    $qb->orderBy('u.id', 'DESC');
+    $user = $qb->getQuery();
     $pageSize = '20';
     $paginator = new Paginator($user);
 

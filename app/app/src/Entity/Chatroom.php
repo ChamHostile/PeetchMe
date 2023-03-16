@@ -16,11 +16,11 @@ class Chatroom
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user1 = null;
+    #[ORM\Column]
+    private ?int $user1 = null;
 
-    #[ORM\ManyToOne(inversedBy: 'chatrooms')]
-    private ?User $user2 = null;
+    #[ORM\Column]
+    private ?int $user2 = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -38,24 +38,24 @@ class Chatroom
         return $this->id;
     }
 
-    public function getUser1(): ?User
+    public function getUser1(): ?int
     {
         return $this->user1;
     }
 
-    public function setUser1(?User $user1): self
+    public function setUser1(int $user1): self
     {
         $this->user1 = $user1;
 
         return $this;
     }
 
-    public function getUser2(): ?User
+    public function getUser2(): ?int
     {
         return $this->user2;
     }
 
-    public function setUser2(?User $user2): self
+    public function setUser2(int $user2): self
     {
         $this->user2 = $user2;
 

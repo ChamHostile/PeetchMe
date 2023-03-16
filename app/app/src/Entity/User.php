@@ -128,16 +128,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $created_at = null;
 
-    #[ORM\OneToMany(mappedBy: 'user1', targetEntity: Chatroom::class, orphanRemoval: true)]
-    private Collection $chatrooms;
-
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Message $message = null;
-
-    public function __construct()
-    {
-        $this->chatrooms = new ArrayCollection();
-    }
+    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
+    private ?Bibilotheque $bibilotheque = null;
 
     public function getId(): ?int
     {
@@ -388,49 +380,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         return (new User())->setId($id);
     }
 
-    /**
-     * @return Collection<int, Chatroom>
-     */
-    public function getChatrooms(): Collection
+    public function getBibilotheque(): ?Bibilotheque
     {
-        return $this->chatrooms;
+        return $this->bibilotheque;
     }
 
-    public function addChatroom(Chatroom $chatroom): self
-    {
-        if (!$this->chatrooms->contains($chatroom)) {
-            $this->chatrooms->add($chatroom);
-            $chatroom->setUser1($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChatroom(Chatroom $chatroom): self
-    {
-        if ($this->chatrooms->removeElement($chatroom)) {
-            // set the owning side to null (unless already changed)
-            if ($chatroom->getUser1() === $this) {
-                $chatroom->setUser1(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getMessage(): ?Message
-    {
-        return $this->message;
-    }
-
-    public function setMessage(Message $message): self
+    public function setBibilotheque(Bibilotheque $bibilotheque): self
     {
         // set the owning side of the relation if necessary
-        if ($message->getUser() !== $this) {
-            $message->setUser($this);
+        if ($bibilotheque->getUserId() !== $this) {
+            $bibilotheque->setUserId($this);
         }
 
-        $this->message = $message;
+        $this->bibilotheque = $bibilotheque;
 
         return $this;
     }

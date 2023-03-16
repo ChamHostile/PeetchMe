@@ -305,7 +305,7 @@ export default {
       const self = this
       console.log(this.user.id)
       this.store.dispatch("setUserType", {
-        id: this.user.id,
+        id: this.user.user.id,
         type: type
       }).then(function (response) {
           console.log(response)

@@ -69,7 +69,7 @@
                     <option value="3">Three</option>
                   </select>
                 </div>
-              <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;">Afficher les projets</div>
+              <div class="btn btn-primary mt-4" style="height:40px !important; border-radius: 10px; background-color: #3F3FA6; border:#3F3FA6;" @click.prevent="searchFilter()">Afficher les projets</div>
             </div>
           </div>
         </div>
